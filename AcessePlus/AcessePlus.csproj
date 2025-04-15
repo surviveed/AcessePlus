@@ -6,4 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Documentacao\" />
+    <Folder Include="Persistencia\" />
+    <Folder Include="Negocio\" />
+    <Folder Include="Modelo\" />
+  </ItemGroup>
+
 </Project>
