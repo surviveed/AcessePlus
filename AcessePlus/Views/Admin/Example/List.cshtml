@@ -1,0 +1,62 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Example Manager";
+}
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Examples</li>
+        </ol>
+    </nav>
+
+    <!-- Title and Create Button -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Examples List</h2>
+        <a href="/gerenciador/example/edit" class="btn btn-primary">Create New</a>
+    </div>
+
+    <!-- Table -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="text-center" style="width: 180px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.Example != null)
+            {
+                foreach (var item in ViewBag.Example)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td class="text-center">
+                            <a href="/gerenciador/example/edit/@item.Id" class="btn btn-sm btn-warning me-2">Edit</a>
+
+                            <form asp-action="Delete" asp-route-id="@item.Id" asp-controller="Example" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this item?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No examples found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

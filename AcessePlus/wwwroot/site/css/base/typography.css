@@ -1,0 +1,67 @@
+.text {
+    font-family: "Inter", sans-serif;
+    line-height: 100%;
+  }
+  .text--13 {
+    font-size: 1.3rem;
+  }
+  .text--15 {
+    font-size: 1.5rem;
+  }
+  .text--16 {
+    font-size: 1.6rem;
+  }
+  .text--20 {
+    font-size: 2rem;
+  }
+  .text--30 {
+    font-size: 3rem;
+  }
+  .text--40 {
+    font-size: 4rem;
+    letter-spacing: -7%;
+  }
+  .text--fw200 {
+    font-weight: 200;
+  }
+  .text--fw300 {
+    font-weight: 300;
+  }
+  .text--fw400 {
+    font-weight: 400;
+  }
+  .text--fw500 {
+    font-weight: 500;
+  }
+  .text--fw600 {
+    font-weight: 600;
+  }
+  .text--fw700 {
+    font-weight: 700;
+  }
+  .text--fw800 {
+    font-weight: 800;
+  }
+  .text--white {
+    color: #FFFFFF;
+  }
+  .text--black {
+    color: #000000;
+  }
+  .text--toupper {
+    text-transform: uppercase;
+  }
+  
+  .title {
+    font-family: "League Spartan", sans-serif;
+    line-height: 100%;
+  }
+  .title--40 {
+    font-size: 4rem;
+  }
+  .title--fw700 {
+    font-weight: 700;
+  }
+  .title--white {
+    color: #FFFFFF;
+  }

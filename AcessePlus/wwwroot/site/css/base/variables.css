@@ -1,0 +1,44 @@
+.button {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    cursor: pointer;
+    transition: 0.3s all ease;
+    margin-left: 10px;
+  }
+  .button--black {
+    background: #000000;
+    border: 2px solid #000000;
+  }
+  .button:hover {
+    background: transparent;
+    transition: 0.3s all ease;
+  }
+  .button:hover .text {
+    color: #000000 !important;
+  }
+  .button:hover svg path {
+    fill: #000000 !important;
+  }
+  
+  .mb-1 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mb-2 {
+    margin-bottom: 2rem !important;
+  }
+  
+  .mb-3 {
+    margin-bottom: 3rem !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 4rem !important;
+  }
+  
+  .mb-5 {
+    margin-bottom: 5rem !important;
+  }
