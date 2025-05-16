@@ -6,5 +6,9 @@
         public string Descricao { get; set; }
         public int CodigoIbge { get; set; }
         public Uf Uf { get; set; }
+        public Cidade()
+        {
+            Uf = new Uf();
+        }
     }
 }

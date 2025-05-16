@@ -8,7 +8,19 @@ namespace AcessePlus.Persistencia
 {
     public class Avaliacao: ConexaoBD
     {
-        public string CamposTabela = "(comentario, tipo_acessibilidade, tipo, id_local)";
+        public const string CamposTabela = "(comentario, tipo_acessibilidade, tipo, id_local)";
+        public Modelo.Avaliacao ObterModelo(NpgsqlDataReader leitor)
+        {
+            var modelo = new Modelo.Avaliacao();
+
+            modelo.Id = leitor.GetInt32(0);
+            modelo.Comentario = leitor.GetString(1);
+            modelo.TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)leitor.GetChar(2);
+            modelo.Tipo_Enum = (Modelo.Avaliacao.eTipo)leitor.GetChar(3);
+            modelo.Local.Id = leitor.GetInt32(4);
+
+            return modelo;
+        }
         public void Inserir(Modelo.Avaliacao modelo)
         {
             StringBuilder sb = new StringBuilder();
@@ -68,13 +80,7 @@ namespace AcessePlus.Persistencia
 
             while (leitor.Read())
             {
-                var modelo = new Modelo.Avaliacao();
-
-                modelo.Id = leitor.GetInt32(0);
-                modelo.Comentario = leitor.GetString(1);
-                modelo.TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)leitor.GetChar(2);
-                modelo.Tipo_Enum = (Modelo.Avaliacao.eTipo)leitor.GetChar(3);
-                modelo.Local.Id = leitor.GetInt32(4);
+                var modelo = ObterModelo(leitor);
 
                 modelos.Add(modelo);
             }
@@ -121,13 +127,7 @@ namespace AcessePlus.Persistencia
 
             if (leitor.Read())
             {
-                modelo = new Modelo.Avaliacao();
-
-                modelo.Id = leitor.GetInt32(0);
-                modelo.Comentario = leitor.GetString(1);
-                modelo.TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)leitor.GetChar(2);
-                modelo.Tipo_Enum = (Modelo.Avaliacao.eTipo)leitor.GetChar(3);
-                modelo.Local.Id = leitor.GetInt32(4);
+                modelo = ObterModelo(leitor);
 
                 modelos.Add(modelo);
             }
