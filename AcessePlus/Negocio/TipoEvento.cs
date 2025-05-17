@@ -15,5 +15,13 @@ namespace AcessePlus.Negocio
         {
             new Persistencia.TipoEvento().Excluir(Id);
         }
+        public Modelo.TipoEvento BuscarPorId(int Id)
+        {
+            return new Persistencia.TipoEvento().BuscarPorId(Id);
+        }
+        public List<Modelo.TipoEvento> BuscarTodos()
+        {
+            return new Persistencia.TipoEvento().BuscarTodos();
+        }
     }
 }

@@ -15,5 +15,13 @@ namespace AcessePlus.Negocio
         {
             new Persistencia.Avaliacao().Excluir(Id);
         }
+        public Modelo.Avaliacao BuscarPorId(int Id)
+        {
+            return new Persistencia.Avaliacao().BuscarPorId(Id);
+        }
+        public List<Modelo.Avaliacao> BuscarTodos()
+        {
+            return new Persistencia.Avaliacao().BuscarTodos();
+        }
     }
 }

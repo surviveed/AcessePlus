@@ -15,5 +15,13 @@ namespace AcessePlus.Negocio
         {
             new Persistencia.Local().Excluir(Id);
         }
+        public Modelo.Local BuscarPorId(int Id)
+        {
+            return new Persistencia.Local().BuscarPorId(Id);
+        }
+        public List<Modelo.Local> BuscarTodos()
+        {
+            return new Persistencia.Local().BuscarTodos();
+        }
     }
 }
