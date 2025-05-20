@@ -1,0 +1,93 @@
+@using AcessePlus.Modelo;
+@{
+    ViewData["Title"] = "Edição de Captações de Recursos";
+    Layout = "_AdminLayout";
+}
+<div class="insert-form">
+    <link rel="stylesheet" href="~/admin/css/main.css" asp-append-version="true" />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 2em;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+            display: grid;
+            justify-items: center;
+        }
+
+        label {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 3px black solid;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+    <h1>Edição de Captações de Recursos</h1>
+    <br>
+
+    <form action="@(ViewBag.Areas != null ? "/gerenciador/evento/edit-form/" + ViewBag.Areas.Id : "/gerenciador/evento/edit-form")" 
+          enctype="multipart/form-data" method="post">
+
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="Nome" value="@(ViewBag.Areas?.Nome ?? "")" />
+
+        <label for="numero">Número:</label>
+        <input type="text" id="numero" name="Numero" value="@(ViewBag.Areas?.Numero ?? "")" />
+
+        <label for="local">Local:</label>
+        <select id="local" name="LocalId">
+            <option value="">Selecione um local</option>
+            @foreach (var local in ViewBag.Locais)
+            {
+                var selected = (ViewBag.Areas?.LocalId == local.Id) ? "selected" : "";
+                <option value="@local.Id" @selected>@local.Nome</option>
+            }
+        </select>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="TipoId">
+            <option value="">Selecione um tipo</option>
+            @foreach (var tipo in ViewBag.Tipos)
+            {
+                var selected = (ViewBag.Areas?.TipoId == tipo.Id) ? "selected" : "";
+                <option value="@tipo.Id" @selected>@tipo.Nome</option>
+            }
+        </select>
+
+        <button type="submit" class="button button--add">Cadastrar</button>
+    </form>
+</div>

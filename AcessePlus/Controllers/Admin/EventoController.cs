@@ -22,8 +22,38 @@ public class EventoController : Controller
     new EventoDTO { Id = 10, Nome = "Oficina de Robótica", Descricao = "Atividade prática para jovens.", Local = new LocalDTO { Nome = "Escola Técnica", Endereco = "Rua das Engenharias, 60" }, TipoEvento = new TipoEventoDTO { Nome = "Oficina" } }
 };
 
+    // Mocked locais
+    List<LocalDTO> locais = new List<LocalDTO>
+{
+    new LocalDTO { Id = 1, Nome = "Centro de Convenções", Endereco = "Av. Tech 1000" },
+    new LocalDTO { Id = 2, Nome = "Auditório Municipal", Endereco = "Rua da Saúde, 200" },
+    new LocalDTO { Id = 3, Nome = "Universidade X", Endereco = "Rua dos Estudantes, 300" },
+    new LocalDTO { Id = 4, Nome = "Centro Jurídico", Endereco = "Av. Justiça, 400" },
+    new LocalDTO { Id = 5, Nome = "Espaço Criativo", Endereco = "Rua Design, 55" },
+    new LocalDTO { Id = 6, Nome = "Incubadora ABC", Endereco = "Av. Start, 123" },
+    new LocalDTO { Id = 7, Nome = "Parque Central", Endereco = "Av. das Flores, 987" },
+    new LocalDTO { Id = 8, Nome = "Instituto de Educação", Endereco = "Rua Ensino, 101" },
+    new LocalDTO { Id = 9, Nome = "Teatro Principal", Endereco = "Av. Cultura, 202" },
+    new LocalDTO { Id = 10, Nome = "Escola Técnica", Endereco = "Rua das Engenharias, 60" }
+};
+
+    // Mocked tipos de evento
+    List<TipoEventoDTO> tiposEvento = new List<TipoEventoDTO>
+{
+    new TipoEventoDTO { Id = 1, Nome = "Feira" },
+    new TipoEventoDTO { Id = 2, Nome = "Simpósio" },
+    new TipoEventoDTO { Id = 3, Nome = "Hackathon" },
+    new TipoEventoDTO { Id = 4, Nome = "Congresso" },
+    new TipoEventoDTO { Id = 5, Nome = "Workshop" },
+    new TipoEventoDTO { Id = 6, Nome = "Encontro" },
+    new TipoEventoDTO { Id = 7, Nome = "Festival" },
+    new TipoEventoDTO { Id = 8, Nome = "Seminário" },
+    new TipoEventoDTO { Id = 9, Nome = "Palestra" },
+    new TipoEventoDTO { Id = 10, Nome = "Oficina" }
+};
+
     // GET: /gerenciador/evento
-    [Route("")]
+    [Route("evento")]
     public IActionResult List([FromQuery] int? page)
     {
         int pageSize = 5; // Número de itens por página
@@ -47,37 +77,60 @@ public class EventoController : Controller
     }
 
     // GET: /gerenciador/evento/edit/{id?}
-    // [Route("edit/{id?}")]
-    // public IActionResult Edit(int? id)
-    // {
-    //     var model = id.HasValue
-    //         ? eventos.FirstOrDefault(x => x.Id == id.Value)
-    //         : new EventoDTO();
+    [Route("evento/edit/{id?}")]
+    public IActionResult Edit(int? id)
+    {
+        var model = id.HasValue
+            ? eventos.FirstOrDefault(x => x.Id == id.Value)
+            : new EventoDTO();
 
-    //     return View(model);
-    // }
+        ViewBag.Locais = locais;
+        ViewBag.Tipos = tiposEvento;
+
+        return View(model);
+    }
 
     // POST: /gerenciador/evento/edit-form/{id?}
-    // [Route("edit-form/{id?}")]
-    // public IActionResult Insert([FromForm] EventoDTO model, int? id)
-    // {
-    //     if (id.HasValue)
-    //     {
-    //         var existing = _mockData.FirstOrDefault(x => x.Id == id.Value);
-    //         if (existing != null)
-    //         {
-    //             existing.Name = model.Name;
-    //             existing.Description = model.Description;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         model.Id = _mockData.Any() ? _mockData.Max(x => x.Id) + 1 : 1;
-    //         _mockData.Add(model);
-    //     }
+    [Route("edit-form/{id?}")]
+    public IActionResult Insert([FromForm] EventoDTO model, int? id)
+    {
+        if (id.HasValue)
+        {
+            var existing = eventos.FirstOrDefault(x => x.Id == id.Value);
+            if (existing != null)
+            {
+                // Atualiza os campos básicos
+                existing.Nome = model.Nome;
+                existing.Descricao = model.Descricao;
 
-    //     return RedirectToAction("List");
-    // }
+                // Atualiza os dados do local
+                if (existing.Local == null)
+                    existing.Local = new LocalDTO();
+
+                existing.Local.Nome = model.Local?.Nome;
+                existing.Local.Endereco = model.Local?.Endereco;
+
+                // Atualiza os dados do tipo de evento
+                if (existing.TipoEvento == null)
+                    existing.TipoEvento = new TipoEventoDTO();
+
+                existing.TipoEvento.Nome = model.TipoEvento?.Nome;
+            }
+        }
+        else
+        {
+            // Define novo ID para o novo evento
+            model.Id = eventos.Any() ? eventos.Max(x => x.Id) + 1 : 1;
+
+            // Cria instâncias para Local e TipoEvento caso venham nulas
+            model.Local ??= new LocalDTO();
+            model.TipoEvento ??= new TipoEventoDTO();
+
+            eventos.Add(model);
+        }
+
+        return RedirectToAction("List");
+    }
 
     // POST: /gerenciador/evento/delete-form/{id}
     // [Route("delete-form/{id}")]
