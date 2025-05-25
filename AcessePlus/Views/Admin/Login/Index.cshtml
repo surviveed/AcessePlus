@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Login Page";
-    Layout = "_AdminLayout";
+    Layout = "_LayoutUnscoped";
 }
 
 <div class="login">
@@ -30,7 +30,7 @@
 
     <div class="login__right">
         <div class="logo">
-            <img src="/admin/images/logo.png" alt="logo">
+            @* <img src="/admin/images/logo.png" alt="logo"> *@
         </div>
         <form action="/gerenciador/check" method="post">
             <div class="row">

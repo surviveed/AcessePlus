@@ -1,8 +1,8 @@
-@using AcessePlus.Modelo;
 @{
     ViewData["Title"] = "Edição de Captações de Recursos";
     Layout = "_AdminLayout";
 }
+
 <div class="insert-form">
     <link rel="stylesheet" href="~/admin/css/main.css" asp-append-version="true" />
 
@@ -59,35 +59,38 @@
     <h1>Edição de Captações de Recursos</h1>
     <br>
 
-    <form action="@(ViewBag.Areas != null ? "/gerenciador/evento/edit-form/" + ViewBag.Areas.Id : "/gerenciador/evento/edit-form")" 
-          enctype="multipart/form-data" method="post">
+    <form
+        action="@(ViewBag.Evento.Id != null ?  "/gerenciador/eventos/update/@ViewBag.Evento.Id" : "/gerenciador/eventos/insert")"
+        method="post" enctype="multipart/form-data">
+        <input type="hidden" value="@(ViewBag.Evento.Id != null ? ViewBag.Evento.Id : "")" />
 
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="Nome" value="@(ViewBag.Areas?.Nome ?? "")" />
+        <label>Nome:</label>
+        <input value="@(ViewBag.Evento.Nome != null ? ViewBag.Evento.Nome : "")" />
 
-        <label for="numero">Número:</label>
-        <input type="text" id="numero" name="Numero" value="@(ViewBag.Areas?.Numero ?? "")" />
+        <label>Descrição:</label>
+        <input value="@(ViewBag.Evento.Descricao != null ? ViewBag.Evento.Descricao : "")" />
 
         <label for="local">Local:</label>
-        <select id="local" name="LocalId">
+        <select name="Local.Id">
             <option value="">Selecione um local</option>
             @foreach (var local in ViewBag.Locais)
             {
-                var selected = (ViewBag.Areas?.LocalId == local.Id) ? "selected" : "";
-                <option value="@local.Id" @selected>@local.Nome</option>
+                var isSelected = ViewBag.Evento.Local.Id == local.Id ? true : false;
+                <option value="@local.Id" selected="@isSelected">@local.Nome</option>
             }
         </select>
 
         <label for="tipo">Tipo:</label>
-        <select id="tipo" name="TipoId">
+        <select name="TipoEvento.Id">
             <option value="">Selecione um tipo</option>
             @foreach (var tipo in ViewBag.Tipos)
             {
-                var selected = (ViewBag.Areas?.TipoId == tipo.Id) ? "selected" : "";
-                <option value="@tipo.Id" @selected>@tipo.Nome</option>
+                var isSelected = ViewBag.Evento.TipoEvento.Id == tipo.Id ? true : false;
+                <option value="@tipo.Id" selected="@isSelected">@tipo.Descricao
+                </option>
             }
         </select>
 
-        <button type="submit" class="button button--add">Cadastrar</button>
+        <button type="submit">Salvar</button>
     </form>
 </div>
