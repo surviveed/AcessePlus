@@ -1,3 +1,4 @@
+using AcessePlus.DataTransferObjects;
 using AcessePlus.Modelo;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,16 +53,17 @@ public class EventoController : Controller
     [HttpGet("edit/{id?}")]
     public IActionResult Edit(int? id)
     {
+        // Buscar todos os locais
+        var locais = new Negocio.Local().BuscarTodos();
+        ViewBag.Locais = locais;
+
+        // Buscar todos os tipos de evento
+        var tipos = new Negocio.TipoEvento().BuscarTodos();
+        ViewBag.Tipos = tipos;
+
+
         if (id.HasValue)
         {
-            // Buscar todos os locais
-            var locais = new Negocio.Local().BuscarTodos();
-            ViewBag.Locais = locais;
-
-            // Buscar todos os tipos de evento
-            var tipos = new Negocio.TipoEvento().BuscarTodos();
-            ViewBag.Tipos = tipos;
-
             // Busca evento existente para edição
             var evento = new Negocio.Evento().BuscarTodos().FirstOrDefault(e => e.Id == id.Value);
             if (evento == null)
@@ -87,19 +89,38 @@ public class EventoController : Controller
         var eventos = new Negocio.Evento().BuscarTodos();
         model.Id = eventos.Any() ? eventos.Max(e => e.Id) + 1 : 1;
 
-        // Cria instâncias caso sejam nulas
-        model.Local ??= new Modelo.Local();
-        model.TipoEvento ??= new Modelo.TipoEvento();
+        // Busca e atribui o Local com base no ID
+        if (model.Local != null && model.Local.Id > 0)
+        {
+            var local = new Negocio.Local().BuscarTodos().FirstOrDefault(l => l.Id == model.Local.Id);
+            if (local == null)
+            {
+                return BadRequest("Local inválido.");
+            }
+            model.Local = local;
+        }
 
-        // Aqui você deveria ter uma camada de serviço ou repositório:
+        // Busca e atribui o TipoEvento com base no ID
+        if (model.TipoEvento != null && model.TipoEvento.Id > 0)
+        {
+            var tipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(t => t.Id == model.TipoEvento.Id);
+            if (tipoEvento == null)
+            {
+                return BadRequest("Tipo de Evento inválido.");
+            }
+            model.TipoEvento = tipoEvento;
+        }
+
+        // Salva o novo evento
         new Negocio.Evento().Salvar(model);
 
         return RedirectToAction("List");
     }
 
+
     // POST: /gerenciador/eventos/update/{id}
     [HttpPost("update/{id}")]
-    public IActionResult Update(int id, [FromForm] Evento model)
+    public IActionResult Update(int id, [FromForm] EventoDTO model)
     {
         var eventos = new Negocio.Evento().BuscarTodos();
         var existing = eventos.FirstOrDefault(e => e.Id == id);
@@ -109,21 +130,37 @@ public class EventoController : Controller
             return NotFound();
         }
 
-        // Atualiza campos
+        // Atualiza campos simples
         existing.Nome = model.Nome;
         existing.Descricao = model.Descricao;
 
-        existing.Local ??= new Local();
-        existing.Local.Nome = model.Local?.Nome;
-        existing.Local.Endereco = model.Local?.Endereco;
+        // Atualiza Local, se necessário
+        if (existing.Local == null || existing.Local.Id != model.LocalId)
+        {
+            var newLocal = new Negocio.Local().BuscarTodos().FirstOrDefault(x => x.Id == model.LocalId);
+            if (newLocal == null)
+            {
+                return BadRequest("Local não encontrado.");
+            }
+            existing.Local = newLocal;
+        }
 
-        existing.TipoEvento ??= new TipoEvento();
-        existing.TipoEvento.Descricao = model.TipoEvento?.Descricao;
+        // Atualiza TipoEvento, se necessário
+        if (existing.TipoEvento == null || existing.TipoEvento.Id != model.TipoEventoId)
+        {
+            var newTipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(x => x.Id == model.TipoEventoId);
+            if (newTipoEvento == null)
+            {
+                return BadRequest("Tipo de Evento não encontrado.");
+            }
+            existing.TipoEvento = newTipoEvento;
+        }
 
         new Negocio.Evento().Salvar(existing);
 
         return RedirectToAction("List");
     }
+
 
     // POST: /gerenciador/eventos/delete/{id}
     [HttpPost("delete/{id}")]
