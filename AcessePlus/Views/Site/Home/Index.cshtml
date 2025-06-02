@@ -1,11 +1,66 @@
+@model AcessePlus.Models.ViewModels.HomeViewModel
+
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Home";
 }
 
-<div class="home">
-    <div class="home-banner">
-        <h1 class="mb-4">Bem vindo ao Acesse+</h1>
-        <a href="/gerenciador/example" class="button">Go to Example Manager</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+<div class="home-banner swiper">
+    <div class="swiper-wrapper">
+        @for (int i = 0; i < Model.Locais.Count; i++)
+        {
+            <div class="swiper-slide">
+                <img src="/images/banner@(i+1).jpg" alt="Banner @(i+1)" />
+            </div>
+        }
     </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
 </div>
+
+<section class="home-locais">
+    <h2>Locais em Destaque</h2>
+    <div class="cards-container" id="cards-container">
+        @foreach (var local in Model.Locais)
+        {
+            <div class="card" data-index="@Model.Locais.IndexOf(local)">
+                <h3>@local.Nome</h3>
+                <p><strong>Endereço:</strong> @local.Endereco</p>
+                <p>@local.Observacoes</p>
+            </div>
+        }
+    </div>
+</section>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script>
+        const locais = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Locais));
+
+        const cardsContainer = document.getElementById('cards-container');
+
+        const swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            on: {
+                init: function () {
+                    updateActiveCard(this.realIndex);
+                },
+                slideChange: function () {
+                    updateActiveCard(this.realIndex);
+                }
+            }
+        });
+
+        function updateActiveCard(index) {
+            [...cardsContainer.children].forEach(card => card.classList.remove('active'));
+            // Adiciona classe active no card correspondente
+            cardsContainer.children[index].classList.add('active');
+        }
+    </script>
+}
