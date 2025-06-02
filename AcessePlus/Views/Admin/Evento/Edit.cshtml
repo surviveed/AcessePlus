@@ -60,18 +60,18 @@
     <br>
 
     <form
-        action="@(ViewBag.Evento.Id != null ?  "/gerenciador/eventos/update/@ViewBag.Evento.Id" : "/gerenciador/eventos/insert")"
+        action="@(ViewBag.Evento?.Id != null && ViewBag.Evento?.Id != 0 ? $"/gerenciador/eventos/update/{ViewBag.Evento.Id}" : "/gerenciador/eventos/insert")"
         method="post" enctype="multipart/form-data">
         <input type="hidden" value="@(ViewBag.Evento.Id != null ? ViewBag.Evento.Id : "")" />
 
         <label>Nome:</label>
-        <input value="@(ViewBag.Evento.Nome != null ? ViewBag.Evento.Nome : "")" />
+        <input name="Nome" value="@(ViewBag.Evento.Nome != null ? ViewBag.Evento.Nome : "")" required />
 
         <label>Descrição:</label>
-        <input value="@(ViewBag.Evento.Descricao != null ? ViewBag.Evento.Descricao : "")" />
+        <input name="Descricao" value="@(ViewBag.Evento.Descricao != null ? ViewBag.Evento.Descricao : "")" required />
 
         <label for="local">Local:</label>
-        <select name="Local.Id">
+        <select name="LocalId" required>
             <option value="">Selecione um local</option>
             @foreach (var local in ViewBag.Locais)
             {
@@ -81,7 +81,7 @@
         </select>
 
         <label for="tipo">Tipo:</label>
-        <select name="TipoEvento.Id">
+        <select name="TipoEventoId" required>
             <option value="">Selecione um tipo</option>
             @foreach (var tipo in ViewBag.Tipos)
             {
