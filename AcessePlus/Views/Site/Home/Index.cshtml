@@ -5,62 +5,49 @@
     ViewData["Title"] = "Home";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-
-<div class="home-banner swiper">
-    <div class="swiper-wrapper">
-        @for (int i = 0; i < Model.Locais.Count; i++)
-        {
-            <div class="swiper-slide">
-                <img src="/images/banner@(i+1).jpg" alt="Banner @(i+1)" />
-            </div>
-        }
+<div class="home-page home-page--full-gradient">
+    <div class="home-top-right-actions">
+        <a href="/gerenciador/login" class="auth-link">Faça login</a>
+        <span class="auth-text"> ou </span>
+        <a href="/gerenciador/cadastro" class="auth-link">Cadastre-se</a>
     </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-pagination"></div>
+
+    <h1 class="main-title text--white">Acesse+</h1>
+
+    <div class="home-main-content">
+        <p class="main-subtitle text--white">Sua jornada pela acessibilidade começa aqui.</p>
+
+        <div class="home-banner swiper">
+            <div class="swiper-wrapper">
+                @foreach (var local in Model.Locais)
+                {
+                    <div class="swiper-slide">
+                        <img src="/images/banner@(local.Id).jpg" alt="Foto do local @local.Nome" />
+                        <div class="swiper-slide-info">
+                            <h3 class="text text--white text--fw700">@local.Nome</h3>
+                            <p class="text text--white text--16">@local.Endereco</p>
+                            <p class="text text--white text--15">@local.Observacoes</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
 </div>
 
-<section class="home-locais">
-    <h2>Locais em Destaque</h2>
-    <div class="cards-container" id="cards-container">
-        @foreach (var local in Model.Locais)
-        {
-            <div class="card" data-index="@Model.Locais.IndexOf(local)">
-                <h3>@local.Nome</h3>
-                <p><strong>Endereço:</strong> @local.Endereco</p>
-                <p>@local.Observacoes</p>
-            </div>
-        }
-    </div>
-</section>
-
-
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
-        const locais = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Locais));
-
-        const cardsContainer = document.getElementById('cards-container');
-
         const swiper = new Swiper('.swiper', {
             loop: true,
             pagination: { el: '.swiper-pagination', clickable: true },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
             on: {
-                init: function () {
-                    updateActiveCard(this.realIndex);
-                },
-                slideChange: function () {
-                    updateActiveCard(this.realIndex);
-                }
+                init: function () { },
+                slideChange: function () { }
             }
         });
-
-        function updateActiveCard(index) {
-            [...cardsContainer.children].forEach(card => card.classList.remove('active'));
-            // Adiciona classe active no card correspondente
-            cardsContainer.children[index].classList.add('active');
-        }
     </script>
 }

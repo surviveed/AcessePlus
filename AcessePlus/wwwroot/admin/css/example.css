@@ -491,7 +491,6 @@ body {
   color: #000;
 }
 
-/* Active and Hoverable Pagination */
 .pagination li a {
   border-radius: 5px;
   -webkit-transition: background-color 0.3s;
@@ -507,7 +506,6 @@ body {
   background-color: #ddd;
 }
 
-/* border-pagination */
 .b-pagination-outer {
   width: 100%;
   margin: 0 auto;
@@ -724,7 +722,6 @@ body {
 .collections-edit .content {
   display: grid;
   grid-template-rows: 40px 1fr;
-  /* 40px: para a 1° linha(header) e 1fr para que a 2°(main) seja flexivel(use todo o conteúdo disponivel) */
   gap: 24px;
   padding: 32px;
   background-color: #fff;
