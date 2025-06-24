@@ -10,7 +10,10 @@
     <div class="home-main-content">
         <p class="main-subtitle text--white">Sua jornada pela acessibilidade começa aqui.</p>
 
+        <p class="main-subtitle text--white">Confira alguns dos locais já cadastrados no Acesse+</p>
+
         <div class="home-banner swiper">
+
             <div class="swiper-wrapper">
                 @foreach (var local in Model.Locais)
                 {
@@ -24,8 +27,6 @@
                     </div>
                 }
             </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
             <div class="swiper-pagination"></div>
         </div>
     </div>
@@ -35,8 +36,43 @@
     <script>
         const swiper = new Swiper('.swiper', {
             loop: true,
-            pagination: { el: '.swiper-pagination', clickable: true },
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 5,
+            spaceBetween: 0,
+
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+                slideShadows: true,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                },
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                992: {
+                    slidesPerView: 3,
+                    spaceBetween: 0,
+                }
+            },
             on: {
                 init: function () { },
                 slideChange: function () { }
