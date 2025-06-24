@@ -192,9 +192,9 @@
         right: var(--spacing-4);
         font-size: 1.4rem;
         white-space: normal;
-        text-align: right; 
+        text-align: right;
         max-width: 60%;
-        flex-wrap: wrap; 
+        flex-wrap: wrap;
         justify-content: flex-end;
     }
 
@@ -279,3 +279,201 @@
             font-size: 2rem;
         }
 }
+
+.main-header {
+    background: rgba(15, 23, 42, 0.5); /* Fundo semi-transparente, ajuste a cor e opacidade */
+    backdrop-filter: blur(8px); /* Efeito de vidro fosco para navegadores modernos */
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0 var(--spacing-4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-header__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px; /* Altura do header */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Logo */
+.main-header__logo {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--text-color-light);
+    text-decoration: none;
+}
+
+/* Menu de Navegação (Desktop) */
+.main-header__menu-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--spacing-4);
+}
+
+    .main-header__menu-list a {
+        color: var(--text-color-light);
+        text-decoration: none;
+        font-size: 1.6rem;
+        padding: 0.5rem 0;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+        /* Efeito de sublinhado no hover */
+        .main-header__menu-list a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--color-primary); /* Use sua cor primária aqui */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .main-header__menu-list a:hover {
+            color: var(--text-color-light);
+        }
+
+            .main-header__menu-list a:hover::after {
+                width: 100%;
+                left: 0;
+            }
+
+
+/* Botão de Login - Reutilizando e adaptando sua classe .button */
+.main-header__actions .button {
+    padding: 0.8rem 2.4rem;
+    border: 1px solid var(--text-color-light);
+    color: var(--text-color-light);
+    background-color: transparent;
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+    .main-header__actions .button:hover {
+        background-color: var(--color-primary); /* Use sua cor primária aqui */
+        border-color: var(--color-primary);
+        color: var(--text-color-light);
+    }
+
+
+/* Botão Hambúrguer (Mobile) - Inicialmente escondido */
+.main-header__mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 24px;
+    position: relative;
+}
+
+    .main-header__mobile-toggle span {
+        display: block;
+        background-color: var(--text-color-light);
+        height: 2px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+    }
+
+        .main-header__mobile-toggle span:nth-child(1) {
+            top: 0;
+        }
+
+        .main-header__mobile-toggle span:nth-child(2) {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .main-header__mobile-toggle span:nth-child(3) {
+            bottom: 0;
+        }
+
+/* Ajuste no conteúdo principal para não ficar atrás do header fixo */
+.home-page {
+    padding-top: 100px; /* Adiciona espaço no topo = altura do header + margem */
+}
+
+/* ==========================================================================
+   Responsividade do Header
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Esconde o menu principal e o botão de login desktop */
+    .main-header__menu {
+        display: none;
+    }
+
+    .main-header__actions .button {
+        display: none;
+    }
+
+    /* Mostra o botão hambúrguer */
+    .main-header__mobile-toggle {
+        display: block;
+    }
+
+    /* Estilização do menu quando estiver aberto no mobile */
+    .main-header__menu.is-open {
+        display: block;
+        position: absolute;
+        top: 70px; /* Altura do header */
+        left: 0;
+        width: 100%;
+        background: rgba(15, 23, 42, 0.95); /* Fundo um pouco mais opaco para o menu */
+        backdrop-filter: blur(10px);
+        padding: var(--spacing-3) 0;
+    }
+
+    .main-header__menu-list {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+    }
+
+        .main-header__menu-list li {
+            width: 100%;
+            text-align: center;
+        }
+
+        .main-header__menu-list a {
+            padding: var(--spacing-3);
+            display: block;
+            width: 100%;
+        }
+
+            .main-header__menu-list a::after {
+                display: none;
+            }
+}
+
+.main-header__logo {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 2rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.main-header__logo-img {
+    height: 60px;
+    object-fit: contain;
+}
+
