@@ -43,25 +43,25 @@ html, body {
     display: flex;
     align-items: center;
     font-size: 1.6rem;
-    color: #000; /* ALTERADO: Texto na parte superior direita para preto */
+    color: #000;
     gap: 0.5rem;
     white-space: nowrap;
 }
 
 .auth-text {
     font-weight: 400;
-    color: #000; /* ALTERADO: Cor do texto de autenticação para preto */
+    color: #000;
 }
 
 .auth-link {
     font-weight: 400;
     text-decoration: none;
-    color: #000 !important; /* ALTERADO: Link de autenticação para preto, com !important para garantir */
+    color: #000 !important;
     transition: color 0.3s ease;
 }
 
     .auth-link:hover {
-        color: var(--color-primary) !important; /* Mantido seu hover */
+        color: var(--color-primary) !important;
         text-decoration: underline;
     }
 
@@ -268,27 +268,6 @@ html, body {
                 left: 0;
             }
 
-.main-header__actions .button {
-    font-size: 1.6rem;
-    font-weight: 600;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    background: #000;
-    color: #FFF !important;
-    border: 2px solid #000;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    transition: 0.3s all ease;
-}
-
-    .main-header__actions .button:hover {
-        background: transparent;
-        border: 2px solid #000000;
-        color: #000000 !important;
-        transition: 0.3s all ease;
-    }
 
 .main-header__mobile-toggle {
     display: none;
@@ -376,10 +355,6 @@ html, body {
         display: none;
     }
 
-    .main-header__actions .button {
-        display: none;
-    }
-
     .main-header__mobile-toggle {
         display: block;
     }
@@ -462,7 +437,7 @@ html, body {
 }
 
 .home-intro-banner__text {
-   max-width: 1100px;
+    max-width: 1100px;
 }
 
 .home-intro-banner__title {
@@ -482,43 +457,17 @@ html, body {
     color: rgba(0,0,0,0.7);
 }
 
-.home-intro-banner__button {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 600;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    background: #000;
-    color: #FFF !important;
-    border: 2px solid #000;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    text-decoration: none;
-    transition: 0.3s all ease;
-    width: fit-content;
-}
-
-.home-intro-banner__button:hover {
-background: transparent;
-color: #000 !important;
-border-color: #000;
-}
-
 .home-intro-banner__image {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.home-intro-banner__image img {
-    max-width: 100%;
-    max-height: 600px;
-    object-fit: contain;
-}
-
+    .home-intro-banner__image img {
+        max-width: 100%;
+        max-height: 600px;
+        object-fit: contain;
+    }
 
 .highlight-paragraph {
     font-size: 3.5rem;

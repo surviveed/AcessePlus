@@ -17,6 +17,7 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
     options.ViewLocationFormats.Add("/Views/Site/Shared/{0}.cshtml");
     options.ViewLocationFormats.Add("/Views/Admin/{1}/{0}.cshtml");
     options.ViewLocationFormats.Add("/Views/Admin/Shared/{0}.cshtml");
+
 });
 
 var app = builder.Build();

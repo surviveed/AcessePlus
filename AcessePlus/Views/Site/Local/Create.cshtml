@@ -1,0 +1,30 @@
+﻿@model AcessePlus.Modelo.Local
+
+<div class="home-page home-page--full-gradient">
+    <div class="home-main-content" style="max-width: 600px;">
+        <h2 class="carousel-title">Cadastrar Novo Local</h2>
+        <form asp-action="Create" method="post">
+            <div style="margin-bottom: 1rem;">
+                <label>Nome</label>
+                <input type="text" name="Nome" class="form-control" value="@Model.Nome" required />
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Capacidade</label>
+                <input type="number" name="Capacidade" class="form-control" value="@Model.Capacidade" required />
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Endereço</label>
+                <input type="text" name="Endereco" class="form-control" value="@Model.Endereco" required />
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Observações</label>
+                <textarea name="Observacoes" class="form-control">@Model.Observacoes</textarea>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>ID Cidade</label>
+                <input type="number" name="Cidade.Id" class="form-control" value="@Model.Cidade?.Id" required />
+            </div>
+            <button type="submit" class="home-intro-banner__button">Salvar</button>
+        </form>
+    </div>
+</div>

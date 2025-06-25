@@ -12,7 +12,18 @@ namespace Persistencia
             {
                 if (_conexaoPostgres == null)
                 {
-                    _conexaoPostgres = new NpgsqlConnection("Server=localhost;Port=5432;Database=AcessePlus;User ID=leonardobitencourt;Password=1234");
+                    string con = "";
+
+                    if (Environment.UserName == "Gabriela - PLMPRO")
+                    {
+                        con = "Server=localhost;Port=5432;Database=acesseplus;User ID=postgres;Password=ucs";
+                    }
+                    else
+                    {
+                        con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=leonardobitencourt;Password=1234";
+                    }
+
+                    _conexaoPostgres = new NpgsqlConnection(con);
                     _conexaoPostgres.Open();
                 }
 

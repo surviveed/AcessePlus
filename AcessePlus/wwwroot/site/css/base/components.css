@@ -1,0 +1,35 @@
+﻿.btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #FFF !important;
+    background: #000;
+    border: 2px solid #000;
+    border-radius: 1rem;
+    padding: 0 2rem;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+    .btn:hover {
+        background: transparent;
+        color: #000 !important;
+        border-color: #000;
+    }
+
+.btn--compact {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.main-header__actions .btn {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}

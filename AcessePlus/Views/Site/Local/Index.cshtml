@@ -1,0 +1,37 @@
+﻿@model List<AcessePlus.Models.ViewModels.LocalViewModel>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Locais";
+}
+
+<div class="local-page">
+    <h1 class="local-title">Locais cadastrados</h1>
+
+    <div class="top-bar" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem;">
+        <a class="btn" asp-action="Create">Adicionar novo local</a>
+
+        <form method="get" class="local-search-form" style="display: flex; gap: 1rem;">
+            <input type="text" name="pesquisa" placeholder="Pesquisar locais..." value="@(Context.Request.Query["pesquisa"])" />
+            <select name="filtro">
+                <option value="Nome" selected="@(Context.Request.Query["filtro"] == "Nome" ? "selected" : null)">Nome</option>
+            </select>
+            <button type="submit" class="btn">Buscar</button>
+        </form>
+    </div>
+
+    <div class="cards-container">
+        @foreach (var local in Model)
+        {
+            <div class="local-card">
+                <img src="@local.ImagemUrl" alt="Imagem do local @local.Nome" />
+                <div class="local-card-content">
+                    <h3>@local.Nome</h3>
+                    <p>@local.Endereco - @local.Cidade/@local.Uf</p>
+                    <p>Capacidade: @local.Capacidade</p>
+                    <p>Rating: @(local.Rating?.ToString("0.0") ?? "N/A")</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

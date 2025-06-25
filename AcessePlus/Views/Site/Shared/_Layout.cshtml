@@ -8,11 +8,16 @@
     <link rel="stylesheet" href="~/site/css/base/variables.css" />
     <link rel="stylesheet" href="~/site/css/base/typography.css" />
     <link rel="stylesheet" href="~/site/css/pages/home.css" />
-    <link rel="stylesheet" href="~/site/css/pages/login.css" />
+    <link rel="stylesheet" href="~/site/css/pages/local.css" />
+    <link rel="stylesheet" href="~/site/css/base/components.css" />
     <link rel="shortcut icon" href="~/images/logo.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    @if (ViewData["Title"]?.ToString() == "Login Page")
+    {
+        <link rel="stylesheet" href="~/site/css/pages/login.css" />
+    }
 
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -20,20 +25,20 @@
 <body>
     <header class="main-header">
         <nav class="main-header__nav">
-            <a class="main-header__logo" asp-page="/Index">
-                <img src="~/images/logo.ico" alt="Logo Acesse+" class="main-header__logo-img" />
-            </a>    
+            <a class="main-header__logo" href="/">
+                <img class="main-header__logo-img" src="/images/logo.png" alt="Logo Acesse+" />
+            </a>
 
             <div class="main-header__menu">
                 <ul class="main-header__menu-list">
                     <li><a href="/#quem-somos">Quem somos</a></li>
-                    <li><a asp-page="/Locais">Locais</a></li>
+                    <li><a asp-controller="Local" asp-action="Index">Locais</a></li>
                     <li><a asp-page="/Eventos">Eventos</a></li>
                     <li><a asp-page="/Buscar">Buscar</a></li>
                 </ul>
             </div>
 
-            <div class="main-header__actions">
+            <div class="btn">
                 <a href="/gerenciador/login" class="button button--primary">Login</a>
                 <button class="main-header__mobile-toggle">
                     <span></span>
