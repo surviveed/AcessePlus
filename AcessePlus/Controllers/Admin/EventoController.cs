@@ -83,36 +83,42 @@ public class EventoController : Controller
 
     // POST: /gerenciador/eventos/insert
     [HttpPost("insert")]
-    public IActionResult Insert([FromForm] Modelo.Evento model)
+    public IActionResult Insert([FromForm] EventoDTO model)
     {
         // Gera novo ID
+        var modelo = new Modelo.Evento()
+        {
+            Id = 0, // Novo evento, ID será gerado pelo banco
+            Nome = model.Nome,
+            Descricao = model.Descricao
+        };
         var eventos = new Negocio.Evento().BuscarTodos();
-        model.Id = eventos.Any() ? eventos.Max(e => e.Id) + 1 : 1;
+
 
         // Busca e atribui o Local com base no ID
-        if (model.Local != null && model.Local.Id > 0)
+        if (model.LocalId > 0)
         {
-            var local = new Negocio.Local().BuscarTodos().FirstOrDefault(l => l.Id == model.Local.Id);
+            var local = new Negocio.Local().BuscarTodos().FirstOrDefault(l => l.Id == model.LocalId);
             if (local == null)
             {
                 return BadRequest("Local inválido.");
             }
-            model.Local = local;
+            modelo.Local = local;
         }
 
         // Busca e atribui o TipoEvento com base no ID
-        if (model.TipoEvento != null && model.TipoEvento.Id > 0)
+        if (model.TipoEventoId> 0)
         {
-            var tipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(t => t.Id == model.TipoEvento.Id);
+            var tipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(t => t.Id == model.TipoEventoId);
             if (tipoEvento == null)
             {
                 return BadRequest("Tipo de Evento inválido.");
             }
-            model.TipoEvento = tipoEvento;
+            modelo.TipoEvento = tipoEvento;
         }
 
         // Salva o novo evento
-        new Negocio.Evento().Salvar(model);
+        new Negocio.Evento().Salvar(modelo);
 
         return RedirectToAction("List");
     }

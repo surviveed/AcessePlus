@@ -14,9 +14,13 @@ namespace Persistencia
                 {
                     string con = "";
 
-                    if (Environment.UserName == "Gabriela - PLMPRO")
+                    if (Environment.UserName == "Gabriela - PLMPRO" )
                     {
-                        con = "Server=localhost;Port=5432;Database=acesseplus;User ID=postgres;Password=ucs";
+                        con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=postgres;Password=ucs";
+                    }
+                    else if(Environment.UserName == "Francisco")
+                    {
+                        con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=postgres;Password=ucs";
                     }
                     else
                     {
@@ -36,6 +40,8 @@ namespace Persistencia
 
             if (Environment.UserName == "Gabriela - PLMPRO")
                 con = "Server=localhost;Port=5432;Database=acesseplus;User ID=postgres;Password=ucs";
+            else if (Environment.UserName == "Francisco")
+                con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=postgres;Password=ucs";
             else
                 con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=leonardobitencourt;Password=1234";
 

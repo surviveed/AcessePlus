@@ -21,7 +21,15 @@ namespace AcessePlus.Negocio
         }
         public List<Modelo.Evento> BuscarTodos()
         {
-            return new Persistencia.Evento().BuscarTodos();
+            var modelos=  new Persistencia.Evento().BuscarTodos();
+
+            foreach(var modelo in modelos)
+            {
+                modelo.Local = new Negocio.Local().BuscarPorId(modelo.Local.Id);
+                modelo.TipoEvento = new Negocio.TipoEvento().BuscarPorId(modelo.TipoEvento.Id);
+            }
+
+            return modelos; 
         }
     }
 }
