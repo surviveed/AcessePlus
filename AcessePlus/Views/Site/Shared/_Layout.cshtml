@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="~/site/css/pages/home.css" />
     <link rel="stylesheet" href="~/site/css/pages/local.css" />
     <link rel="stylesheet" href="~/site/css/base/components.css" />
+    <link rel="stylesheet" href="~/site/css/base/login.css" />
     <link rel="shortcut icon" href="~/images/logo.ico" type="image/x-icon" />
+    @await RenderSectionAsync("Styles", required: false)
 
     @if (ViewData["Title"]?.ToString() == "Login Page")
     {

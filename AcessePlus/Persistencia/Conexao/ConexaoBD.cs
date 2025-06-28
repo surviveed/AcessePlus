@@ -30,6 +30,18 @@ namespace Persistencia
                 return _conexaoPostgres;
             }
         }
+        public static NpgsqlConnection GetConnection()
+        {
+            string con;
 
+            if (Environment.UserName == "Gabriela - PLMPRO")
+                con = "Server=localhost;Port=5432;Database=acesseplus;User ID=postgres;Password=ucs";
+            else
+                con = "Server=localhost;Port=5432;Database=AcessePlus;User ID=leonardobitencourt;Password=1234";
+
+            var conexao = new NpgsqlConnection(con);
+            conexao.Open();
+            return conexao;
+        }
     }
 }

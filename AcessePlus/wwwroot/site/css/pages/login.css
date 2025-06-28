@@ -1,0 +1,73 @@
+﻿body {
+    background: radial-gradient(circle at top left, rgb(0, 71, 153) 26%, rgb(0, 197, 197) 100%, rgb(0, 49, 139) 100%), rgb(185, 185, 185);
+    height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-wrapper {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 3rem 4rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    max-width: 380px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    .login-wrapper h2 {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 2rem;
+    }
+
+    .login-wrapper input[type="email"],
+    .login-wrapper input[type="password"] {
+        width: 100%;
+        height: 50px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+        border: none;
+        background: #fff;
+        font-size: 1.6rem;
+        box-sizing: border-box;
+        outline: none;
+        color: #000;
+    }
+
+    .login-wrapper button.btn {
+        width: 100%;
+        padding: 1.3rem 0;
+        font-size: 1.6rem;
+        border-radius: 10px;
+        background: #000;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .login-wrapper a.btn {
+        margin-top: 1rem;
+        text-align: center;
+        display: block;
+    }
+
+.forgot-link {
+    text-align: right;
+    margin-bottom: 2rem;
+}
+
+    .forgot-link a {
+        font-weight: 600;
+        color: #000;
+        text-decoration: none;
+    }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }

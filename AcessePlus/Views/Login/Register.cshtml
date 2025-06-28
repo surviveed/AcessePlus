@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Cadastro";
+    Layout = "_LayoutUnscoped";
+}
+
+<div class="register">
+    <h1>Cadastro de Usuário</h1>
+    <form asp-action="Register" method="post">
+        <label>
+            Nome:
+            <input type="text" name="Nome" required />
+        </label>
+        <label>
+            Email:
+            <input type="email" name="Email" required />
+        </label>
+        <label>
+            Senha:
+            <input type="password" name="Senha" required />
+        </label>
+        <button type="submit" class="button button--black">Cadastrar</button>
+    </form>
+
+    @if (ViewBag.Erro != null)
+    {
+        <p style="color:red">@ViewBag.Erro</p>
+    }
+</div>
