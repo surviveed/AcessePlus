@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/site/css/pages/local.css" />
     <link rel="stylesheet" href="~/site/css/base/components.css" />
     <link rel="stylesheet" href="~/site/css/base/login.css" />
+
     <link rel="shortcut icon" href="~/images/logo.ico" type="image/x-icon" />
     @await RenderSectionAsync("Styles", required: false)
 
@@ -35,13 +36,25 @@
                 <ul class="main-header__menu-list">
                     <li><a href="/#quem-somos">Quem somos</a></li>
                     <li><a asp-controller="Local" asp-action="Index">Locais</a></li>
-                    <li><a asp-page="/Eventos">Eventos</a></li>
+                    <li><a href="/gerenciador/eventos">Eventos</a></li>
                     <li><a asp-page="/Buscar">Buscar</a></li>
                 </ul>
             </div>
 
-            <div class="btn">
-                <a href="/gerenciador/login" class="button button--primary">Login</a>
+            @{
+                var nomeUsuario = Context.Session.GetString("UsuarioNome");
+            }
+
+            <div class="main-header__actions">
+                @if (!string.IsNullOrEmpty(nomeUsuario))
+                {
+                    <a href="/gerenciador/logout" class="btn">Sair</a>
+                }
+                else
+                {
+                    <a href="/gerenciador/login" class="btn">Login</a>
+                }
+
                 <button class="main-header__mobile-toggle">
                     <span></span>
                     <span></span>

@@ -8,13 +8,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-// Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
-    options.EnableEndpointRouting = false; // Disables endpoint-based routing
+    options.EnableEndpointRouting = false;
 });
 
-// Configure custom view locations
 builder.Services.Configure<RazorViewEngineOptions>(options =>
 {
     options.ViewLocationFormats.Clear();
@@ -44,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();

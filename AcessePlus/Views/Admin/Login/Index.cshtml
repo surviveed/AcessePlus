@@ -1,51 +1,35 @@
-@section Styles {
-    <link rel="stylesheet" href="~/admin/css/main.css" />
-}
-
 @{
-    Layout = "~/Views/Site/Shared/_Layout.cshtml";
+    Layout = "~/Views/Admin/Shared/_LoginLayout.cshtml";
 }
 
-<div class="login home-page home-page--full-gradient" style="min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+<div class="login-wrapper">
+    <h1 class="login-title">Login</h1>
 
-    <div class="login__right" style="background: rgba(255,255,255,0.85); padding: 2rem 3rem; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); width: 350px;">
-        <h1 style="font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 2rem; text-align:center;">Login</h1>
+    <form asp-action="Index" method="post">
 
-        <form asp-action="Index" method="post">
+        <div class="input-group">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email" placeholder="seu@email.com" required />
+        </div>
 
-            <div class="row">
-                <label for="email">
-                    <p class="mb-1">E-mail *</p>
-                    <input id="email" type="email" name="email" placeholder="Insira seu e-mail" required />
-                    <span class="error"></span>
-                </label>
-            </div>
+        <div class="input-group">
+            <label for="senha">Senha</label>
+            <input id="senha" type="password" name="senha" placeholder="••••••••" required />
+        </div>
 
-            <div class="row" style="margin-top: 1rem;">
-                <label for="senha">
-                    <p class="mb-1">Senha *</p>
-                    <input id="senha" type="password" name="senha" placeholder="Insira sua senha" required />
-                    <span class="error"></span>
-                </label>
-            </div>
+        <button class="btn-submit" type="submit">Entrar</button>
 
-            <div style="margin-top: 1rem; text-align: right;">
-                <a href="#" class="forgot-link">Esqueceu a senha?</a>
-            </div>
+    </form>
 
-            <button class="button" type="submit" style="width: 100%; margin-top: 1.5rem;">Entrar</button>
-        </form>
+    <p class="register-text">
+        Ainda não tem conta?
+        <a asp-action="Register"><strong>Cadastre-se</strong></a>
+    </p>
 
-        <a asp-action="Register" class="button" style="margin-top: 1rem; display: block; text-align: center;">
-            Cadastre-se
-        </a>
-
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <script>
-                alert('@TempData["ErrorMessage"]');
-            </script>
-        }
-    </div>
-
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            alert('@Html.Raw(TempData["ErrorMessage"])');
+        </script>
+    }
 </div>

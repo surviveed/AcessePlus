@@ -8,6 +8,7 @@ namespace AcessePlus.Controllers;
 public class EventoController : Controller
 {
     // Lista eventos paginados e retorna View
+    [HttpGet("")]
     public IActionResult List([FromQuery] int? page)
     {
         int currentPage = page ?? 1;
@@ -20,7 +21,12 @@ public class EventoController : Controller
         ViewBag.PageSize = resultado.PageSize;
         ViewBag.Eventos = resultado.Data;
 
-        return View();
+        if (!UsuarioEstaLogado())
+        {
+            return View("~/Views/Site/Evento/Index.cshtml");
+        }
+
+        return View("~/Views/Admin/Evento/List.cshtml");
     }
 
     // Método privado para paginação
@@ -53,18 +59,19 @@ public class EventoController : Controller
     [HttpGet("edit/{id?}")]
     public IActionResult Edit(int? id)
     {
-        // Buscar todos os locais
+        if (!UsuarioEstaLogado())
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var locais = new Negocio.Local().BuscarTodos();
         ViewBag.Locais = locais;
 
-        // Buscar todos os tipos de evento
         var tipos = new Negocio.TipoEvento().BuscarTodos();
         ViewBag.Tipos = tipos;
 
-
         if (id.HasValue)
         {
-            // Busca evento existente para edição
             var evento = new Negocio.Evento().BuscarTodos().FirstOrDefault(e => e.Id == id.Value);
             if (evento == null)
             {
@@ -74,7 +81,6 @@ public class EventoController : Controller
         }
         else
         {
-            // Novo evento
             ViewBag.Evento = new Modelo.Evento();
         }
 
@@ -83,45 +89,54 @@ public class EventoController : Controller
 
     // POST: /gerenciador/eventos/insert
     [HttpPost("insert")]
-    public IActionResult Insert([FromForm] Modelo.Evento model)
+    public IActionResult Insert([FromForm] EventoDTO model)
     {
-        // Gera novo ID
-        var eventos = new Negocio.Evento().BuscarTodos();
-        model.Id = eventos.Any() ? eventos.Max(e => e.Id) + 1 : 1;
-
-        // Busca e atribui o Local com base no ID
-        if (model.Local != null && model.Local.Id > 0)
+        if (!UsuarioEstaLogado())
         {
-            var local = new Negocio.Local().BuscarTodos().FirstOrDefault(l => l.Id == model.Local.Id);
+            return RedirectToAction("Index", "Login");
+        }
+
+        var novoEvento = new Modelo.Evento()
+        {
+            Id = 0,
+            Nome = model.Nome,
+            Descricao = model.Descricao
+        };
+
+        if (model.LocalId > 0)
+        {
+            var local = new Negocio.Local().BuscarTodos().FirstOrDefault(l => l.Id == model.LocalId);
             if (local == null)
             {
                 return BadRequest("Local inválido.");
             }
-            model.Local = local;
+            novoEvento.Local = local;
         }
 
-        // Busca e atribui o TipoEvento com base no ID
-        if (model.TipoEvento != null && model.TipoEvento.Id > 0)
+        if (model.TipoEventoId > 0)
         {
-            var tipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(t => t.Id == model.TipoEvento.Id);
+            var tipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(t => t.Id == model.TipoEventoId);
             if (tipoEvento == null)
             {
                 return BadRequest("Tipo de Evento inválido.");
             }
-            model.TipoEvento = tipoEvento;
+            novoEvento.TipoEvento = tipoEvento;
         }
 
-        // Salva o novo evento
-        new Negocio.Evento().Salvar(model);
+        new Negocio.Evento().Salvar(novoEvento);
 
         return RedirectToAction("List");
     }
-
 
     // POST: /gerenciador/eventos/update/{id}
     [HttpPost("update/{id}")]
     public IActionResult Update(int id, [FromForm] EventoDTO model)
     {
+        if (!UsuarioEstaLogado())
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var eventos = new Negocio.Evento().BuscarTodos();
         var existing = eventos.FirstOrDefault(e => e.Id == id);
 
@@ -130,11 +145,9 @@ public class EventoController : Controller
             return NotFound();
         }
 
-        // Atualiza campos simples
         existing.Nome = model.Nome;
         existing.Descricao = model.Descricao;
 
-        // Atualiza Local, se necessário
         if (existing.Local == null || existing.Local.Id != model.LocalId)
         {
             var newLocal = new Negocio.Local().BuscarTodos().FirstOrDefault(x => x.Id == model.LocalId);
@@ -145,7 +158,6 @@ public class EventoController : Controller
             existing.Local = newLocal;
         }
 
-        // Atualiza TipoEvento, se necessário
         if (existing.TipoEvento == null || existing.TipoEvento.Id != model.TipoEventoId)
         {
             var newTipoEvento = new Negocio.TipoEvento().BuscarTodos().FirstOrDefault(x => x.Id == model.TipoEventoId);
@@ -161,11 +173,15 @@ public class EventoController : Controller
         return RedirectToAction("List");
     }
 
-
     // POST: /gerenciador/eventos/delete/{id}
     [HttpPost("delete/{id}")]
     public IActionResult Delete(int id)
     {
+        if (!UsuarioEstaLogado())
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
         var negocioEvento = new Negocio.Evento();
         var evento = negocioEvento.BuscarTodos().FirstOrDefault(e => e.Id == id);
 
@@ -177,5 +193,10 @@ public class EventoController : Controller
         negocioEvento.Excluir(evento.Id);
 
         return RedirectToAction("List");
+    }
+
+    private bool UsuarioEstaLogado()
+    {
+        return !string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogado"));
     }
 }

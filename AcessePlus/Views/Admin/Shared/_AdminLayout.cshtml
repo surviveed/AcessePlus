@@ -12,9 +12,15 @@
 </head>
 
 <body>
+    @{
+        var usuarioLogado = Context.Session.GetString("UsuarioLogado");
+    }
 
     <div class="admin">
-        <partial name="/Views/Admin/Components/Menu.cshtml" />
+        @if (!string.IsNullOrEmpty(usuarioLogado))
+        {
+            <partial name="/Views/Admin/Components/Menu.cshtml" />
+        }
 
         @RenderBody()
     </div>

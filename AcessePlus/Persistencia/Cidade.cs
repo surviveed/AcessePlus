@@ -14,12 +14,16 @@ namespace AcessePlus.Persistencia
             var modelo = new Modelo.Cidade();
 
             modelo.Id = leitor.GetInt32(0);
+
+            modelo.Uf = new Modelo.Uf();
+
             modelo.Uf.Id = leitor.GetInt32(1);
             modelo.Descricao = leitor.GetString(2);
             modelo.CodigoIbge = leitor.GetInt32(3);
 
             return modelo;
         }
+
         public void Inserir(Modelo.Cidade modelo)
         {
             StringBuilder sb = new StringBuilder();

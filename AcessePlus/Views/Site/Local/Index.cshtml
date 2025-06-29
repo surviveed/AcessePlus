@@ -4,7 +4,19 @@
     Layout = "_Layout";
     ViewData["Title"] = "Locais";
 }
+@{
+    var nomeUsuario = Context.Session.GetString("UsuarioNome");
+}
 
+@if (!string.IsNullOrEmpty(nomeUsuario))
+{
+    <p>Bem-vindo, <strong>@nomeUsuario</strong>!</p>
+}
+
+@if (!string.IsNullOrEmpty(nomeUsuario))
+{
+    <p>Bem-vindo, <strong>@nomeUsuario</strong>!</p>
+}
 <div class="local-page">
     <h1 class="local-title">Locais cadastrados</h1>
 

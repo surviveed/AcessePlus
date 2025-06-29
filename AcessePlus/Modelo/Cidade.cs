@@ -1,14 +1,23 @@
-﻿namespace AcessePlus.Modelo
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace AcessePlus.Modelo
 {
     public class Cidade
     {
-        public int Id { get; set; }
-        public string Descricao { get; set; }
-        public int CodigoIbge { get; set; }
-        public Uf Uf { get; set; }
         public Cidade()
         {
             Uf = new Uf();
         }
+
+        public int Id { get; set; }
+
+        [ValidateNever]
+        public string Descricao { get; set; }
+
+        [ValidateNever]
+        public Uf Uf { get; set; }
+
+        [ValidateNever]
+        public int CodigoIbge { get; set; }
     }
 }

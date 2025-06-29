@@ -5,6 +5,7 @@ namespace AcessePlus.Controllers;
 [Route("gerenciador/login")]
 public class LoginController : Controller
 {
+
     [HttpGet("")]
     public IActionResult Index()
     {
@@ -14,8 +15,6 @@ public class LoginController : Controller
     [HttpPost("")]
     public IActionResult Index(string email, string senha)
     {
-        var usuario = new Usuario().SearchEmailAndPassword(email, senha);
-        
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
         {
             ViewBag.Erro = "Preencha todos os campos.";
@@ -27,10 +26,13 @@ public class LoginController : Controller
             return View();
         }
 
+        var usuario = new Usuario().SearchEmailAndPassword(email, senha);
+
         if (usuario != null)
         {
             HttpContext.Session.SetString("UsuarioLogado", usuario.Email);
-            return RedirectToAction("Index", "Dashboard");
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+            return RedirectToAction("Login", "Home");
         }
 
         ViewBag.Erro = "Email ou senha inválidos.";
@@ -49,13 +51,23 @@ public class LoginController : Controller
         try
         {
             new Usuario().Cadastrar(usuario);
-            return RedirectToAction("Index"); 
+
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+
+            return RedirectToAction("Login", "Home");
         }
         catch (Exception ex)
         {
             ViewBag.Erro = ex.Message;
-            return View(usuario); 
+            return View(usuario);
         }
+    }
+
+    [HttpGet("/gerenciador/logout")]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Login", "Home");
     }
 
 }

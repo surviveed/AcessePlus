@@ -1,30 +1,178 @@
-﻿@model AcessePlus.Modelo.Local
+﻿@{
+	Layout = "~/Views/Site/Shared/_Layout.cshtml";
+}
+
+@model LocalCreateViewModel
 
 <div class="home-page home-page--full-gradient">
-    <div class="home-main-content" style="max-width: 600px;">
-        <h2 class="carousel-title">Cadastrar Novo Local</h2>
-        <form asp-action="Create" method="post">
-            <div style="margin-bottom: 1rem;">
-                <label>Nome</label>
-                <input type="text" name="Nome" class="form-control" value="@Model.Nome" required />
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label>Capacidade</label>
-                <input type="number" name="Capacidade" class="form-control" value="@Model.Capacidade" required />
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label>Endereço</label>
-                <input type="text" name="Endereco" class="form-control" value="@Model.Endereco" required />
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label>Observações</label>
-                <textarea name="Observacoes" class="form-control">@Model.Observacoes</textarea>
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label>ID Cidade</label>
-                <input type="number" name="Cidade.Id" class="form-control" value="@Model.Cidade?.Id" required />
-            </div>
-            <button type="submit" class="home-intro-banner__button">Salvar</button>
-        </form>
-    </div>
+	<div class="home-main-content" style="max-width: 600px;">
+		<h2 class="carousel-title">Cadastrar Novo Local</h2>
+		<form asp-action="Create" method="post">
+			@Html.AntiForgeryToken()
+
+			<div style="margin-bottom: 1rem;">
+				<label>Nome</label>
+				<input type="text" name="Nome" class="form-control" value="@Model.Nome" required />
+			</div>
+			<div style="margin-bottom: 1rem;">
+				<label>Capacidade</label>
+				<input type="number" name="Capacidade" class="form-control" value="@Model.Capacidade" required />
+			</div>
+			<div style="margin-bottom: 1rem;">
+				<label>Endereço</label>
+				<input type="text" name="Endereco" class="form-control" value="@Model.Endereco" required />
+			</div>
+			<div style="margin-bottom: 1rem;">
+				<label>Observações</label>
+				<textarea name="Observacoes" class="form-control">@Model.Observacoes</textarea>
+			</div>
+
+			<div style="margin-bottom: 1rem;">
+				<label>País</label>
+				<select id="paisSelect" name="PaisId" class="form-control" required>
+					<option value="">Selecione o país</option>
+					@foreach (var pais in (List<AcessePlus.Modelo.Pais>)ViewBag.Paises)
+					{
+						if (Model?.PaisId == pais.Id)
+						{
+							<option value="@pais.Id" selected>@pais.Descricao</option>
+						}
+						else
+						{
+							<option value="@pais.Id">@pais.Descricao</option>
+						}
+					}
+				</select>
+			</div>
+
+			<div style="margin-bottom: 1rem;">
+				<label>Estado</label>
+				<select id="ufSelect" name="UfId" class="form-control" required>
+					<option value="">Selecione o estado</option>
+					@foreach (var uf in (List<AcessePlus.Modelo.Uf>)(ViewBag.Ufs ?? new List<AcessePlus.Modelo.Uf>()))
+					{
+						if (Model?.UfId == uf.Id)
+						{
+							<option value="@uf.Id" selected>@uf.Descricao</option>
+						}
+						else
+						{
+							<option value="@uf.Id">@uf.Descricao</option>
+						}
+					}
+				</select>
+			</div>
+
+			<div style="margin-bottom: 1rem;">
+				<label>Cidade</label>
+				<select id="cidadeSelect" name="CidadeId" class="form-control" required>
+					<option value="">Selecione a cidade</option>
+					@foreach (var cidade in (List<AcessePlus.Modelo.Cidade>)(ViewBag.Cidades ?? new List<AcessePlus.Modelo.Cidade>()))
+					{
+						if (Model?.CidadeId == cidade.Id)
+						{
+							<option value="@cidade.Id" selected>@cidade.Descricao</option>
+						}
+						else
+						{
+							<option value="@cidade.Id">@cidade.Descricao</option>
+						}
+					}
+				</select>
+			</div>
+
+			<button type="submit" class="home-intro-banner__button">Salvar</button>
+		</form>
+	</div>
 </div>
+
+@section Scripts {
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const paisSelect = document.getElementById('paisSelect');
+			const ufSelect = document.getElementById('ufSelect');
+			const cidadeSelect = document.getElementById('cidadeSelect');
+
+			const selectedPaisId = '@(Model?.PaisId?.ToString() ?? "")';
+			const selectedUfId = '@(Model?.UfId?.ToString() ?? "")';
+			const selectedCidadeId = '@(Model?.CidadeId?.ToString() ?? "")';
+
+			function carregarUfs(paisId, selecionarUfId = "") {
+				ufSelect.innerHTML = '<option value="">Carregando estados...</option>';
+				cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+				ufSelect.disabled = true;
+				cidadeSelect.disabled = true;
+
+				if (!paisId) {
+					ufSelect.innerHTML = '<option value="">Selecione o estado</option>';
+					ufSelect.disabled = true;
+					return;
+				}
+
+				fetch(`/Locais/BuscarUFsPorPais/${paisId}`)
+					.then(res => res.json())
+					.then(ufs => {
+						ufSelect.innerHTML = '<option value="">Selecione o estado</option>';
+						ufs.forEach(uf => {
+							const option = document.createElement('option');
+							option.value = uf.id;
+							option.textContent = uf.descricao;
+							ufSelect.appendChild(option);
+						});
+
+						ufSelect.disabled = false;
+
+						if (selecionarUfId) {
+							ufSelect.value = selecionarUfId;
+							carregarCidades(selecionarUfId, selectedCidadeId);
+						}
+					});
+			}
+
+			function carregarCidades(ufId, selecionarCidadeId = "") {
+				cidadeSelect.innerHTML = '<option value="">Carregando cidades...</option>';
+				cidadeSelect.disabled = true;
+
+				if (!ufId) {
+					cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+					cidadeSelect.disabled = true;
+					return;
+				}
+
+				fetch(`/Locais/BuscarCidadesPorUf/${ufId}`)
+					.then(res => res.json())
+					.then(cidades => {
+						cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+						cidades.forEach(cidade => {
+							const option = document.createElement('option');
+							option.value = cidade.id;
+							option.textContent = cidade.descricao;
+							cidadeSelect.appendChild(option);
+						});
+
+						cidadeSelect.disabled = false;
+
+						if (selecionarCidadeId) {
+							cidadeSelect.value = selecionarCidadeId;
+						}
+					});
+			}
+
+			if (selectedPaisId) {
+				carregarUfs(selectedPaisId, selectedUfId);
+			} else {
+				ufSelect.disabled = true;
+				cidadeSelect.disabled = true;
+			}
+
+
+			paisSelect.addEventListener('change', function () {
+				carregarUfs(this.value);
+			});
+
+			ufSelect.addEventListener('change', function () {
+				carregarCidades(this.value);
+			});
+		});
+	</script>
+}

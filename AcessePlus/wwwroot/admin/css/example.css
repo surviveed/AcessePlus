@@ -589,99 +589,12 @@ body {
 }
 
 .login {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  overflow: hidden;
-}
-.login__left {
-  width: 60%;
-  height: 100%;
-  background: radial-gradient(circle at top left, rgb(0, 71, 153) 26%, rgb(0, 197, 197) 100%, rgb(0, 49, 139) 100%), rgb(185, 185, 185);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-.login__left .button {
-  position: absolute;
-  top: 3rem;
-  left: 5rem;
-}
-.login__right {
-  height: 100%;
-  width: 40%;
-  background: #E3E3E3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 100px 0;
-}
-.login__right .logo {
-  border-radius: 50%;
-  background: #000;
-  width: 15rem;
-  height: 15rem;
-  overflow: hidden;
-}
-.login__right .logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.login__right form {
-  padding: 0 10%;
-  width: 100%;
-}
-.login__right form p,
-.login__right form a {
-  font-weight: bold;
-  color: #000;
-  text-decoration: none;
-}
-.login__right form .forgot-link {
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  margin-bottom: 50px;
-  margin-top: -30px;
-}
-.login__right form input {
-  width: 100%;
-  height: 50px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  font: inherit;
-  color: inherit;
-  background: none;
-  appearance: none;
-  outline: none;
-  background: #FFF;
-  border-radius: 10px;
-  margin-bottom: 50px;
-  padding: 20px;
-}
-.login__right form button {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: none;
-  font: inherit;
-  color: inherit;
-  background: none;
-  appearance: none;
-  outline: none;
-  background: #000;
-  border-radius: 10px;
-  padding: 10px 30px;
-  color: #FFF;
-  height: 5rem;
-  justify-content: center;
-}
-.login__right #return {
-  margin-top: 10px;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
 }
 
 .dashboard {
@@ -843,5 +756,3 @@ body {
 .insert_form button {
   background-color: #4CAF50;
 }
-
-/*# sourceMappingURL=main.css.map */

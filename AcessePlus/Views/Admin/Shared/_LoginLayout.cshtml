@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - AcessePlus</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/site/css/base/variables.css" />
+    <link rel="stylesheet" href="~/site/css/base/components.css" />
+    <link rel="stylesheet" href="~/site/css/pages/home.css" />
+    <link rel="stylesheet" href="~/site/css/pages/login.css" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+    <header class="main-header">
+        <nav class="main-header__nav">
+            <a class="main-header__logo" href="/">
+                <img class="main-header__logo-img" src="/images/logo.png" alt="Logo Acesse+" />
+            </a>
+
+            <div class="main-header__menu">
+                <ul class="main-header__menu-list">
+                    <li><a href="/#quem-somos">Quem somos</a></li>
+                    <li><a asp-controller="Local" asp-action="Index">Locais</a></li>
+                    <li><a href="/gerenciador/eventos">Eventos</a></li>
+                    <li><a asp-page="/Buscar">Buscar</a></li>
+                </ul>
+            </div>
+
+            <div class="main-header__actions">
+                <a href="/gerenciador/login" class="btn">Login</a>
+                <button class="main-header__mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="login-main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__content">
+            <p>© @DateTime.Now.Year <strong>Acesse+</strong> - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
