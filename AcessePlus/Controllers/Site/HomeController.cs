@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using AcessePlus.Modelo;
+using AcessePlus.Negocio;
 using AcessePlus.Models.ViewModels;
+using System.Threading.Tasks;
+using System;
 
 namespace AcessePlus.Controllers.Site
 {
@@ -9,14 +12,24 @@ namespace AcessePlus.Controllers.Site
     {
         public async Task<IActionResult> Index()
         {
-            var locais = new List<Local>
+            var localNegocio = new AcessePlus.Negocio.Local();
+            var imagemNegocio = new AcessePlus.Negocio.LocalImagem();
+
+            var locais = localNegocio.BuscarTodos();
+
+            foreach (var local in locais)
             {
-                new Local { Id = 1, Nome = "Praça Central", Endereco = "Rua Principal, 123", Observacoes = "Possui rampa e sinalização tátil" },
-                new Local { Id = 2, Nome = "Biblioteca Municipal", Endereco = "Av. Leitura, 45", Observacoes = "Banheiro adaptado e elevador" },
-                new Local { Id = 3, Nome = "Teatro da Cidade", Endereco = "Rua das Artes, 78", Observacoes = "Acesso com guia rebaixada e assentos reservados" },
-                new Local { Id = 4, Nome = "Banave Docrontiy", Endereco = "Av. Assis Brasil, 52", Observacoes = "Rampa de acesso com inclinação suave e corrimãos duplos em ambos os ladoss"},
-                new Local { Id = 5, Nome = "Centro de Integração Comunitária", Endereco = "ERS-122, 3841", Observacoes = "Todos os corredores e áreas de circulação interna são amplos"}
-            };
+                var imagens = imagemNegocio.BuscarPorLocal(local.Id);
+                if (imagens.Any())
+                {
+                    var imagemBase64 = Convert.ToBase64String(imagens.First().Imagem);
+                    local.ImagemUrl = $"data:image/png;base64,{imagemBase64}";
+                }
+                else
+                {
+                    local.ImagemUrl = "/images/default.png";
+                }
+            }
 
             var vm = new HomeViewModel
             {

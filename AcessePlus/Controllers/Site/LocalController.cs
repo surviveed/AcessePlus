@@ -1,6 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using AcessePlus.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using AcessePlus.Modelo;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AcessePlus.Controllers.Site
 {
@@ -9,12 +15,29 @@ namespace AcessePlus.Controllers.Site
     {
         [AllowAnonymous]
         [HttpGet("")]
-        public IActionResult Index(string pesquisa = "", string filtro = "Nome")
+        public IActionResult Index(string nome, int? tipoLocalId, int? capacidade)
         {
-            var negocio = new AcessePlus.Negocio.Local();
-            var locais = negocio.BuscarTodos();
+            var negocioLocal = new AcessePlus.Negocio.Local();
+            var todosLocais = negocioLocal.BuscarTodos();
 
-            var viewModels = locais.Select(l => new LocalViewModel
+            IEnumerable<AcessePlus.Modelo.Local> locaisFiltrados = todosLocais;
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                locaisFiltrados = locaisFiltrados.Where(l => l.Nome.Contains(nome, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (tipoLocalId.HasValue && tipoLocalId > 0)
+            {
+                locaisFiltrados = locaisFiltrados.Where(l => l.TipoLocal.Id == tipoLocalId.Value);
+            }
+
+            if (capacidade.HasValue && capacidade > 0)
+            {
+                locaisFiltrados = locaisFiltrados.Where(l => l.Capacidade >= capacidade.Value);
+            }
+
+            var resultadosViewModel = locaisFiltrados.Select(l => new LocalViewModel
             {
                 Id = l.Id,
                 Nome = l.Nome,
@@ -22,20 +45,26 @@ namespace AcessePlus.Controllers.Site
                 Cidade = l.Cidade?.Descricao ?? "",
                 Uf = l.Cidade?.Uf?.Descricao ?? "",
                 Capacidade = l.Capacidade,
-                Rating = null, //TODO: implementar depois
-                ImagemUrl = "/images/default-local.jpg"
+                TipoLocalDescricao = l.TipoLocal?.Descricao ?? "",
+                Rating = null, // TODO: Lógica do rating
+                ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id })
             }).ToList();
 
-            if (!string.IsNullOrWhiteSpace(pesquisa))
-            {
-                if (filtro == "Nome")
-                    viewModels = viewModels.Where(v => v.Nome.Contains(pesquisa, System.StringComparison.OrdinalIgnoreCase)).ToList();
-            }
+            var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
 
-            return View(viewModels);
+            var viewModel = new LocaisBuscaViewModel
+            {
+                Resultados = resultadosViewModel,
+                TiposDeLocal = new SelectList(tipos, "Id", "Descricao", tipoLocalId),
+                Nome = nome,
+                TipoLocalId = tipoLocalId,
+                Capacidade = capacidade
+            };
+
+            return View(viewModel); 
         }
 
-        private void CarregarListasParaView(int? paisId, int? ufId)
+        private void CarregarListasParaView(int? paisId, int? ufId, int? tipoLocalId = null)
         {
             if (paisId.HasValue)
                 ViewBag.Ufs = new AcessePlus.Negocio.Uf().BuscarTodos().Where(u => u.Pais.Id == paisId).ToList();
@@ -46,6 +75,11 @@ namespace AcessePlus.Controllers.Site
                 ViewBag.Cidades = new AcessePlus.Negocio.Cidade().BuscarTodos().Where(c => c.Uf.Id == ufId).ToList();
             else
                 ViewBag.Cidades = new List<AcessePlus.Modelo.Cidade>();
+
+            var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
+            ViewBag.Tipos = tipos;
+
+            ViewBag.TipoLocalSelecionado = tipoLocalId;
         }
 
         [HttpGet("Criar")]
@@ -58,7 +92,7 @@ namespace AcessePlus.Controllers.Site
             var paises = new AcessePlus.Negocio.Pais().BuscarTodos();
             ViewBag.Paises = paises;
 
-            CarregarListasParaView(null, null);
+            CarregarListasParaView(null, null, null);
 
             return View(new LocalCreateViewModel());
         }
@@ -67,19 +101,48 @@ namespace AcessePlus.Controllers.Site
         [ValidateAntiForgeryToken]
         public IActionResult Create(LocalCreateViewModel vm)
         {
+            if (vm.Capacidade <= 0)
+            {
+                ModelState.AddModelError("Capacidade", "A capacidade deve ser maior que zero.");
+            }
+
+            if (vm.Imagens == null || vm.Imagens.Count == 0)
+            {
+                ModelState.AddModelError("Imagens", "Por favor, envie pelo menos uma foto do local.");
+            }
+
+            if (vm.TipoLocalId == 0)
+            {
+                ModelState.AddModelError("TipoLocalId", "Selecione um tipo de local válido.");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-                CarregarListasParaView(vm.PaisId, vm.UfId);
+                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
                 return View(vm);
             }
 
-            var cidade = new AcessePlus.Negocio.Cidade().BuscarTodos().FirstOrDefault(c => c.Id == vm.CidadeId);
+            var cidade = new AcessePlus.Negocio.Cidade().BuscarTodos()
+                .FirstOrDefault(c => c.Id == vm.CidadeId);
+
             if (cidade == null)
             {
                 ModelState.AddModelError("", "Cidade inválida.");
                 ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-                CarregarListasParaView(vm.PaisId, vm.UfId);
+                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
+                return View(vm);
+            }
+
+            var tipoLocal = new AcessePlus.Negocio.TipoLocal()
+                .BuscarTodos()
+                .FirstOrDefault(t => t.Id == vm.TipoLocalId);
+
+            if (tipoLocal == null)
+            {
+                ModelState.AddModelError("TipoLocalId", "Tipo de local inválido.");
+                ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
+                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
                 return View(vm);
             }
 
@@ -88,14 +151,39 @@ namespace AcessePlus.Controllers.Site
                 Nome = vm.Nome,
                 Capacidade = vm.Capacidade,
                 Endereco = vm.Endereco,
-                Observacoes = vm.Observacoes,
-                Cidade = cidade
+                Cidade = cidade,
+                TipoLocal = tipoLocal
             };
 
             var negocio = new AcessePlus.Negocio.Local();
             negocio.Salvar(local);
 
-            return RedirectToAction("Index");
+            if (vm.Imagens != null && vm.Imagens.Count > 0)
+            {
+                var negocioImagem = new AcessePlus.Negocio.LocalImagem();
+                int ordem = 0;
+
+                foreach (var imagem in vm.Imagens)
+                {
+                    using var ms = new MemoryStream();
+                    imagem.CopyTo(ms);
+                    var bytes = ms.ToArray();
+
+                    var localImagem = new Modelo.LocalImagem
+                    {
+                        LocalId = local.Id,
+                        Imagem = bytes,
+                        NomeArquivo = imagem.FileName,
+                        Ordem = ordem++,
+                        DataCadastro = DateTime.Now
+                    };
+
+                    negocioImagem.Salvar(localImagem);
+                }
+            }
+
+            TempData["Sucesso"] = true;
+            return RedirectToAction("Create");
         }
 
         [HttpGet("BuscarUFsPorPais/{id}")]
@@ -112,6 +200,23 @@ namespace AcessePlus.Controllers.Site
             var cidades = new AcessePlus.Negocio.Cidade().BuscarTodos().Where(c => c.Uf != null && c.Uf.Id == id).ToList();
             var resultado = cidades.Select(c => new { c.Id, c.Descricao }).ToList();
             return Json(resultado);
+        }
+
+        [HttpGet("Imagem/{localId}")]
+        public IActionResult Imagem(int localId)
+        {
+            var negocioImagem = new AcessePlus.Negocio.LocalImagem();
+            var imagens = negocioImagem.BuscarTodos()
+                          .Where(img => img.LocalId == localId)
+                          .OrderBy(img => img.Ordem)
+                          .ToList();
+
+            if (!imagens.Any())
+                return NotFound();
+
+            var primeiraImagem = imagens.First();
+
+            return File(primeiraImagem.Imagem, "image/jpeg");
         }
     }
 }

@@ -8,7 +8,9 @@
         public string Cidade { get; set; }
         public string Uf { get; set; }
         public int Capacidade { get; set; }
-        public double? Rating { get; set; }
+        public string TipoLocalDescricao { get; set; }
+        public int TipoLocalId { get; set; }
         public string ImagemUrl { get; set; }
+        public double? Rating { get; set; }
     }
 }

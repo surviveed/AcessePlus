@@ -1,28 +1,39 @@
 ﻿@{
     ViewData["Title"] = "Cadastro";
-    Layout = "_LayoutUnscoped";
+    Layout = "~/Views/Admin/Shared/_LoginLayout.cshtml";
 }
 
-<div class="register">
-    <h1>Cadastro de Usuário</h1>
+<div class="login-wrapper">
+    <h1 class="login-title">Cadastro</h1>
+
     <form asp-action="Register" method="post">
-        <label>
-            Nome:
-            <input type="text" name="Nome" required />
-        </label>
-        <label>
-            Email:
-            <input type="email" name="Email" required />
-        </label>
-        <label>
-            Senha:
-            <input type="password" name="Senha" required />
-        </label>
-        <button type="submit" class="button button--black">Cadastrar</button>
+        <div class="input-group">
+            <label for="Nome">Nome</label>
+            <input id="Nome" type="text" name="Nome" placeholder="Seu nome" required />
+        </div>
+
+        <div class="input-group">
+            <label for="Email">E-mail</label>
+            <input id="Email" type="email" name="Email" placeholder="seu@email.com" required />
+        </div>
+
+        <div class="input-group">
+            <label for="Senha">Senha</label>
+            <input id="Senha" type="password" name="Senha" placeholder="••••••••" required />
+        </div>
+
+        <button class="btn-submit" type="submit">Cadastrar</button>
     </form>
+
+    <p class="register-text">
+        Já tem uma conta?
+        <a asp-action="Index"><strong>Faça login</strong></a>
+    </p>
 
     @if (ViewBag.Erro != null)
     {
-        <p style="color:red">@ViewBag.Erro</p>
+        <script>
+            alert('@Html.Raw(ViewBag.Erro)');
+        </script>
     }
 </div>

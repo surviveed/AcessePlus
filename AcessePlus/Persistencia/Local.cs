@@ -8,37 +8,49 @@ namespace AcessePlus.Persistencia
 {
     public class Local : ConexaoBD
     {
-        public const string CamposTabela = "(nome, capacidade, endereco,observacoes,id_cidade)";
+        public const string CamposTabela = "(nome, capacidade, endereco, id_cidade, id_tipo_local)";
         public Modelo.Local ObterModelo(NpgsqlDataReader leitor)
         {
             var modelo = new Modelo.Local();
 
-            modelo.Id = leitor.GetInt32(0);
-            modelo.Nome = leitor.GetString(1);
-            modelo.Capacidade = leitor.GetInt32(2);
-            modelo.Endereco= leitor.GetString(3);
-            modelo.Observacoes= leitor.GetString(4);
-            modelo.Cidade.Id = leitor.GetInt32(5);
+            modelo.Id = leitor.GetInt32(leitor.GetOrdinal("id"));
+            modelo.Nome = leitor.GetString(leitor.GetOrdinal("nome"));
+            modelo.Capacidade = leitor.GetInt32(leitor.GetOrdinal("capacidade"));
+            modelo.Endereco = leitor.GetString(leitor.GetOrdinal("endereco"));
+
+            modelo.TipoLocal = new Modelo.TipoLocal
+            {
+                Id = leitor.GetInt32(leitor.GetOrdinal("tipo_local_id")),
+                Descricao = leitor.GetString(leitor.GetOrdinal("tipo_local_descricao"))
+            };
+
+            modelo.Cidade = new Modelo.Cidade
+            {
+                Id = leitor.GetInt32(leitor.GetOrdinal("id_cidade"))
+            };
 
             return modelo;
         }
-        public void Inserir(Modelo.Local modelo)
+
+
+        public int Inserir(Modelo.Local modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = $@"
+        INSERT INTO local {CamposTabela}
+        VALUES (@nome,@capacidade,@endereco,@id_cidade,@id_tipo_local)
+        RETURNING id;";
 
-            sb.AppendLine(string.Format("INSERT INTO local {0}" +
-                " VALUES (@nome,@capacidade,@endereco,@observacoes,@id_cidade);", CamposTabela));
+            using var comando = new NpgsqlCommand(sql, Conexao);
+            comando.Parameters.AddWithValue("nome", modelo.Nome);
+            comando.Parameters.AddWithValue("capacidade", modelo.Capacidade);
+            comando.Parameters.AddWithValue("endereco", modelo.Endereco);
+            comando.Parameters.AddWithValue("id_cidade", modelo.Cidade.Id);
+            comando.Parameters.AddWithValue("id_tipo_local", modelo.TipoLocal.Id);
 
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("nome", modelo.Nome));
-            comando.Parameters.Add(new NpgsqlParameter("capacidade", modelo.Capacidade));
-            comando.Parameters.Add(new NpgsqlParameter("endereco", modelo.Endereco));
-            comando.Parameters.Add(new NpgsqlParameter("observacoes", modelo.Observacoes));
-            comando.Parameters.Add(new NpgsqlParameter("id_cidade", modelo.Cidade.Id));
-
-            comando.ExecuteNonQuery();
+            var id = comando.ExecuteScalar();
+            return Convert.ToInt32(id);
         }
+
         public void Excluir(int Id)
         {
             StringBuilder sb = new StringBuilder();
@@ -57,7 +69,7 @@ namespace AcessePlus.Persistencia
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine(string.Format("UPDATE local " +
-                " SET nome = @nome, capacidade = @capacidade, endereco=@endereco, observacoes=@observacoes, id_cidade=@id_cidade" +
+                " SET nome = @nome, capacidade = @capacidade, endereco=@endereco, id_tipo_local=@id_tipo_local, id_cidade=@id_cidade" +
                 " WHERE id= @id"));
 
             NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
@@ -65,7 +77,7 @@ namespace AcessePlus.Persistencia
             comando.Parameters.Add(new NpgsqlParameter("nome", modelo.Nome));
             comando.Parameters.Add(new NpgsqlParameter("capacidade", modelo.Capacidade));
             comando.Parameters.Add(new NpgsqlParameter("endereco", modelo.Endereco));
-            comando.Parameters.Add(new NpgsqlParameter("observacoes", modelo.Observacoes));
+            comando.Parameters.Add(new NpgsqlParameter("id_tipo_local", modelo.TipoLocal.Id));
             comando.Parameters.Add(new NpgsqlParameter("id_cidade", modelo.Cidade.Id));
             comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
 
@@ -75,7 +87,18 @@ namespace AcessePlus.Persistencia
         {
             List<Modelo.Local> modelos = new List<Modelo.Local>();
 
-            var sql = "SELECT * FROM local;";
+            var sql = @"
+SELECT 
+    l.id,
+    l.nome,
+    l.capacidade,
+    l.endereco,
+    tl.id AS tipo_local_id,
+    tl.descricao AS tipo_local_descricao,
+    l.id_cidade
+FROM local l
+INNER JOIN tipolocal tl ON l.id_tipo_local = tl.id;";
+
 
             NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
 

@@ -32,8 +32,20 @@
                 </ul>
             </div>
 
+            @{
+                var nomeUsuario = Context.Session.GetString("UsuarioNome");
+            }
+
             <div class="main-header__actions">
-                <a href="/gerenciador/login" class="btn">Login</a>
+                @if (!string.IsNullOrEmpty(nomeUsuario))
+                {
+                    <a href="/gerenciador/logout" class="btn">Sair</a>
+                }
+                else
+                {
+                    <a href="/gerenciador/login" class="btn">Login</a>
+                }
+
                 <button class="main-header__mobile-toggle">
                     <span></span>
                     <span></span>

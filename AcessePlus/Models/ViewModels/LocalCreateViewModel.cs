@@ -1,10 +1,13 @@
-﻿public class LocalCreateViewModel
+﻿using AcessePlus.Modelo;
+
+public class LocalCreateViewModel
 {
     public string Nome { get; set; }
     public int Capacidade { get; set; }
     public string Endereco { get; set; }
-    public string Observacoes { get; set; }
     public int? PaisId { get; set; }
+    public int TipoLocalId { get; set; }
     public int? UfId { get; set; }
     public int? CidadeId { get; set; }
+    public List<IFormFile> Imagens { get; set; } = new();
 }

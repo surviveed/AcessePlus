@@ -26,11 +26,11 @@
                 @foreach (var local in Model.Locais)
                 {
                     <div class="swiper-slide">
-                        <img src="/images/banner@(local.Id).jpg" alt="Foto do local @local.Nome" />
+                        <img src="@local.ImagemUrl" alt="Foto do local @local.Nome" />
                         <div class="swiper-slide-info">
                             <h3 class="text text--white text--fw700">@local.Nome</h3>
                             <p class="text text--white text--16">@local.Endereco</p>
-                            <p class="text text--white text--15">@local.Observacoes</p>
+                            <p class="text text--white text--15">@local.TipoLocal?.Descricao</p>
                         </div>
                     </div>
                 }
