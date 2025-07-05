@@ -10,6 +10,22 @@
     <link rel="stylesheet" href="~/site/css/pages/local.css" />
 }
 
+@section Scripts {
+    <script src="~/site/js/pages/local.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData["Sucesso"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Avaliação enviada com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        </script>
+    }
+}
+
 <div class="local-page">
 
     <aside class="search-menu">
@@ -59,6 +75,7 @@
                                 <p>@local.Endereco - @local.Cidade/@local.Uf</p>
                                 <p>Capacidade: @local.Capacidade</p>
                                 <p>Rating: @(local.Rating?.ToString("0.0") ?? "N/A")</p>
+                                <button type="button" class="btn-avaliar" onclick="abrirModal('@local.Nome','@local.Id')">Avaliar</button>
                             </div>
                         </div>
                     }
@@ -72,5 +89,49 @@
                 </div>
             }
         </main>
+
+      <!-- Modal -->
+        <div id="avaliarModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2 class="login-title">Avaliação de <span id="nomeLocalSpan"></span></h2>
+
+                <form asp-action="Avaliar" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" id="LocalId" name="LocalId" />
+
+                    <div class="input-group">
+                        <label for="comentario">Comentário</label>
+                        <textarea id="comentario" name="comentario" maxlength="2000" rows="5" style="width: 100%;"></textarea>
+                        <small id="contadorComentario">0 / 2000</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipoAcessibilidade">Tipo de Acessibilidade</label>
+                        <select id="tipoAcessibilidade" name="tipoAcessibilidade" class="input" required>
+                            <option value="">Selecione</option>
+                            <option value="A">Auditiva</option>
+                            <option value="V">Visual</option>
+                            <option value="L">Locomoção</option>
+                            <option value="S">Sensorial</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" name="tipo" class="input" required>
+                            <option value="">Selecione</option>
+                            <option value="P">Positiva</option>
+                            <option value="N">Negativa</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+
+
     </div>
 </div>

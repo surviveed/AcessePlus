@@ -8,7 +8,7 @@ namespace AcessePlus.Persistencia
 {
     public class Avaliacao: ConexaoBD
     {
-        public const string CamposTabela = "(comentario, tipo_acessibilidade, tipo, id_local)";
+        public const string CamposTabela = "(comentario, tipo_acessibilidade, tipo, id_local, id_usuario)";
         public Modelo.Avaliacao ObterModelo(NpgsqlDataReader leitor)
         {
             var modelo = new Modelo.Avaliacao();
@@ -18,6 +18,7 @@ namespace AcessePlus.Persistencia
             modelo.TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)leitor.GetChar(2);
             modelo.Tipo_Enum = (Modelo.Avaliacao.eTipo)leitor.GetChar(3);
             modelo.Local.Id = leitor.GetInt32(4);
+            modelo.Usuario.Id = leitor.GetInt32(5);
 
             return modelo;
         }
@@ -26,7 +27,7 @@ namespace AcessePlus.Persistencia
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine(string.Format("INSERT INTO avaliacao {0}" +
-                " VALUES (@comentario,@tipo_acessibilidade,@tipo, @id_local);", CamposTabela));
+                " VALUES (@comentario,@tipo_acessibilidade,@tipo, @id_local, @id_usuario);", CamposTabela));
 
             NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
 
@@ -34,6 +35,7 @@ namespace AcessePlus.Persistencia
             comando.Parameters.Add(new NpgsqlParameter("tipo_acessibilidade", modelo.TipoAcessibilidade));
             comando.Parameters.Add(new NpgsqlParameter("tipo", modelo.Tipo));
             comando.Parameters.Add(new NpgsqlParameter("id_local", modelo.Local.Id));
+            comando.Parameters.Add(new NpgsqlParameter("id_usuario", modelo.Usuario.Id));
 
             comando.ExecuteNonQuery();
         } 
@@ -55,7 +57,7 @@ namespace AcessePlus.Persistencia
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine(string.Format("UPDATE avaliacao " +
-                " SET comentario = @comentario, tipo_acessibilidade = @tipo_acessibilidade, tipo=@tipo, id_local=@id_local" +
+                " SET comentario = @comentario, tipo_acessibilidade = @tipo_acessibilidade, tipo=@tipo, id_local=@id_local, id_usuario=@id_usuario" +
                 " WHERE id= @id"));
 
             NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
@@ -64,6 +66,7 @@ namespace AcessePlus.Persistencia
             comando.Parameters.Add(new NpgsqlParameter("tipo_acessibilidade", modelo.TipoAcessibilidade));
             comando.Parameters.Add(new NpgsqlParameter("tipo", modelo.Tipo));
             comando.Parameters.Add(new NpgsqlParameter("id_local", modelo.Local.Id));
+            comando.Parameters.Add(new NpgsqlParameter("id_usuario", modelo.Usuario.Id));
             comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
 
             comando.ExecuteNonQuery();

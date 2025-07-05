@@ -32,6 +32,7 @@ public class LoginController : Controller
         {
             HttpContext.Session.SetString("UsuarioLogado", usuario.Email);
             HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+            HttpContext.Session.SetInt32("IdUsuarioLogado", usuario.Id);
             return RedirectToAction("Login", "Home");
         }
 

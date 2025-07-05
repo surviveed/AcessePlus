@@ -15,7 +15,10 @@ namespace AcessePlus.Modelo
             Visual = 'V',
 
             [Description("Locomotiva")]
-            Locomotiva = 'L'
+            Locomotiva = 'L',
+
+            [Description("Sensorial")]
+            Sensorial = 'S',
         }
         public eTipoAcessibilidade TipoAcessibilidade_Enum { get; set; }
         public char TipoAcessibilidade { get { return Convert.ToChar(TipoAcessibilidade_Enum); } }
@@ -30,10 +33,12 @@ namespace AcessePlus.Modelo
         public eTipo Tipo_Enum { get; set; }
         public char Tipo { get { return Convert.ToChar(Tipo_Enum); } }
         public Local Local { get; set; }
+        public Usuario Usuario { get; set; }
 
         public Avaliacao()
         {
             Local = new Local();
+            Usuario = new Usuario();
         }
     }
 }

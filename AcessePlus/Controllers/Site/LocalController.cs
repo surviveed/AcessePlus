@@ -63,7 +63,6 @@ namespace AcessePlus.Controllers.Site
 
             return View(viewModel); 
         }
-
         private void CarregarListasParaView(int? paisId, int? ufId, int? tipoLocalId = null)
         {
             if (paisId.HasValue)
@@ -185,6 +184,37 @@ namespace AcessePlus.Controllers.Site
             TempData["Sucesso"] = true;
             return RedirectToAction("Create");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Avaliar(int LocalId, string comentario, string tipoAcessibilidade, string tipo)
+        {
+            var usuarioLogado = HttpContext.Session.GetInt32("IdUsuarioLogado");
+            if (usuarioLogado==0 || usuarioLogado ==null )
+                return RedirectToAction("Index", "Login");
+
+            // Validações básicas
+            if (string.IsNullOrWhiteSpace(comentario) || string.IsNullOrWhiteSpace(tipoAcessibilidade) || string.IsNullOrWhiteSpace(tipo))
+            {
+                TempData["Erro"] = "Todos os campos são obrigatórios.";
+                return RedirectToAction("Index");
+            }
+
+            new Negocio.Avaliacao().Salvar(new Modelo.Avaliacao
+            {
+                Local = new Local() { Id=LocalId},
+                Usuario = new Usuario(){Id= usuarioLogado.Value},
+                Comentario = comentario,
+                TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)Convert.ToChar(tipoAcessibilidade),
+                Tipo_Enum = (Modelo.Avaliacao.eTipo)Convert.ToChar(tipo)
+            });
+
+            // Aqui você pode salvar no banco, ex:
+            // _context.Avaliacoes.Add(new Avaliacao { ... });
+
+            TempData["Sucesso"] = true;
+            return RedirectToAction("Index");
+        }
+
 
         [HttpGet("BuscarUFsPorPais/{id}")]
         public IActionResult BuscarUFsPorPais(int id)
