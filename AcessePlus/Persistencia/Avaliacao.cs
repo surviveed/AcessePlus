@@ -138,5 +138,25 @@ namespace AcessePlus.Persistencia
 
             return modelo;
         }
+        public List<Modelo.Avaliacao> BuscarPorIdLocal(int IdLocal)
+        {
+            List<Modelo.Avaliacao> modelos = new List<Modelo.Avaliacao>();
+
+            var sql = "SELECT * FROM avaliacao WHERE id_local=@id_local;";
+
+            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
+
+            comando.Parameters.Add(new NpgsqlParameter("id_local", IdLocal));
+
+            NpgsqlDataReader leitor = comando.ExecuteReader();
+
+            while (leitor.Read())
+            {
+                modelos.Add(ObterModelo(leitor)) ;
+            }
+            leitor.Close();
+
+            return modelos;
+        }
     }
 }

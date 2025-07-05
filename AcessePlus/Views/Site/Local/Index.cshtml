@@ -7,6 +7,7 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/site/css/pages/local.css" />
 }
 
@@ -17,10 +18,10 @@
     {
         <script>
             Swal.fire({
-                icon: 'success',
-                title: 'Avaliação enviada com sucesso!',
-                showConfirmButton: false,
-                timer: 2000
+            icon: 'success',
+            title: 'Avaliação enviada com sucesso!',
+            showConfirmButton: false,
+            timer: 2000
             });
         </script>
     }
@@ -74,8 +75,22 @@
                                 <h3>@local.Nome</h3>
                                 <p>@local.Endereco - @local.Cidade/@local.Uf</p>
                                 <p>Capacidade: @local.Capacidade</p>
-                                <p>Rating: @(local.Rating?.ToString("0.0") ?? "N/A")</p>
-                                <button type="button" class="btn-avaliar" onclick="abrirModal('@local.Nome','@local.Id')">Avaliar</button>
+
+                                <div class="avaliacoes-container">
+                                    <div class="avaliacao-item positiva">
+                                        <i class="fas fa-thumbs-up"></i><span>@local.QtdAvaliacoesPositivas</span>
+                                    </div>
+                                    <div class="avaliacao-item negativa">
+                                        <i class="fas fa-thumbs-down"></i><span>@local.QtdAvaliacoesNegativas</span>
+                                    </div>
+                                </div>
+
+                                <button type="button"
+                                        class="btn-avaliar"
+                                        onclick="abrirModal('@local.Nome','@local.Id')"
+                                @(local.JaAvaliado ? "disabled" : "")>
+                                    Avaliar
+                                </button>
                             </div>
                         </div>
                     }
@@ -89,6 +104,7 @@
                 </div>
             }
         </main>
+
 
       <!-- Modal -->
         <div id="avaliarModal" class="modal" style="display: none;">

@@ -36,6 +36,7 @@ namespace AcessePlus.Controllers.Site
             {
                 locaisFiltrados = locaisFiltrados.Where(l => l.Capacidade >= capacidade.Value);
             }
+            var usuarioLogado = HttpContext.Session.GetInt32("IdUsuarioLogado");
 
             var resultadosViewModel = locaisFiltrados.Select(l => new LocalViewModel
             {
@@ -46,8 +47,10 @@ namespace AcessePlus.Controllers.Site
                 Uf = l.Cidade?.Uf?.Descricao ?? "",
                 Capacidade = l.Capacidade,
                 TipoLocalDescricao = l.TipoLocal?.Descricao ?? "",
-                Rating = null, // TODO: Lógica do rating
-                ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id })
+                ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id }),
+                JaAvaliado= usuarioLogado!=null ? l.Avaliacoes.Any(x=>x.Usuario.Id==usuarioLogado):false,
+                QtdAvaliacoesPositivas= l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Positiva),
+                QtdAvaliacoesNegativas= l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Negativa),
             }).ToList();
 
             var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();

@@ -51,7 +51,12 @@ namespace AcessePlus.Negocio
         }
         public List<Modelo.Local> BuscarTodos()
         {
-            return new Persistencia.Local().BuscarTodos();
+            var retorno = new Persistencia.Local().BuscarTodos();
+            foreach(var item in retorno)
+            {
+                item.Avaliacoes= new Persistencia.Avaliacao().BuscarPorIdLocal(item.Id);
+            }
+            return retorno; 
         }
     }
 }

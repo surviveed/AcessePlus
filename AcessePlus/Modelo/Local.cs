@@ -8,9 +8,11 @@
         public TipoLocal TipoLocal { get; set; }
         public string Endereco { get; set; }
         public Cidade Cidade { get; set; }
+        public List<Avaliacao> Avaliacoes { get; set; }
         public Local()
         {
             Cidade = new Cidade();
+            Avaliacoes= new List<Avaliacao>();
         }
         public string ImagemUrl { get; set; }
     }

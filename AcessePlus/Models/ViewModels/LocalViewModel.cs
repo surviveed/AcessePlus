@@ -11,6 +11,8 @@
         public string TipoLocalDescricao { get; set; }
         public int TipoLocalId { get; set; }
         public string ImagemUrl { get; set; }
-        public double? Rating { get; set; }
+        public bool JaAvaliado { get; set; }
+        public int QtdAvaliacoesPositivas { get; set; }
+        public int QtdAvaliacoesNegativas { get; set; }
     }
 }
