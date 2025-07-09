@@ -1,3 +1,5 @@
+@model AcessePlus.Models.ViewModels.EventosBuscaViewModel
+
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Eventos";
@@ -31,23 +33,20 @@
 
         <form asp-action="Index" method="get" class="search-form" id="search-form">
 
-            @* <div class="form-group">
+            <div class="form-group">
                 <label asp-for="Nome" class="form-label">Nome do Local</label>
                 <input asp-for="Nome" class="form-control" placeholder="Digite o nome..." />
             </div>
 
             <div class="form-group">
-                <label asp-for="TipoLocalId" class="form-label">Tipo de Local</label>
-                <select asp-for="TipoLocalId" asp-items="Model.TiposDeLocal" class="form-control">
+                <label asp-for="TipoEventoId" class="form-label">Tipo de Local</label>
+                <select asp-for="TipoEventoId" asp-items="Model.TiposDeEventos" class="form-control">
                     <option value="">Todos os tipos</option>
                 </select>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Capacidade" class="form-label">Capacidade Mínima</label>
-                <input asp-for="Capacidade" type="number" min="0" class="form-control" placeholder="Ex: 50" />
-            </div> *@
-
+            <div class="menu-actions">
+                <button type="submit" form="search-form" class="btn btn-primary">Buscar</button>
+            </div>
         </form>
     </aside>
 
@@ -56,33 +55,29 @@
         <h1 class="local-title">Encontre o Evento Ideal</h1>
 
         <main class="local-results">
-            @* @if (Model.Resultados.Any())
+            @if (Model.Resultados.Any())
             {
                 <div class="cards-container">
                     @foreach (var local in Model.Resultados)
                     {
                         <div class="local-card" tabindex="0" role="button" aria-label="Local @local.Nome">
-                            <img src="@local.ImagemUrl" alt="Imagem do local @local.Nome" />
                             <div class="local-card-content">
                                 <h3>@local.Nome</h3>
-                                <p>@local.Endereco - @local.Cidade/@local.Uf</p>
-                                <p>Capacidade: @local.Capacidade</p>
+                                <p>@local.Descricao</p>
 
-                                <div class="avaliacoes-container">
+                                @* <div class="avaliacoes-container">
                                     <div class="avaliacao-item positiva">
                                         <i class="fas fa-thumbs-up"></i><span>@local.QtdAvaliacoesPositivas</span>
                                     </div>
                                     <div class="avaliacao-item negativa">
                                         <i class="fas fa-thumbs-down"></i><span>@local.QtdAvaliacoesNegativas</span>
                                     </div>
-                                </div>
+                                </div> *@
 
-                                <button type="button"
-                                        class="btn-avaliar"
-                                        onclick="abrirModal('@local.Nome','@local.Id')"
-                                @(local.JaAvaliado ? "disabled" : "")>
+                                @* <button type="button" class="btn-avaliar" onclick="abrirModal('@local.Nome','@local.Id')"
+                                    @(local.JaAvaliado ? "disabled" : "")>
                                     Avaliar
-                                </button>
+                                </button> *@
                             </div>
                         </div>
                     }
@@ -94,7 +89,7 @@
                     <h3>Nenhum local encontrado</h3>
                     <p>Tente ajustar os filtros da sua busca.</p>
                 </div>
-            } *@
+            }
         </main>
 
 
