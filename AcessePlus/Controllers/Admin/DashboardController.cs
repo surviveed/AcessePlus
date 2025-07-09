@@ -10,6 +10,11 @@ public class DashboardController : Controller
     [Route("/gerenciador")]
     public IActionResult Index()
     {
+        var usuarioLogado = HttpContext.Session.GetString("UsuarioLogado");
+        if (string.IsNullOrEmpty(usuarioLogado))
+        {
+            return RedirectToAction("Index", "Login");
+        }
         return View();
     }
 }

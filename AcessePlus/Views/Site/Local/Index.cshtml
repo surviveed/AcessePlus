@@ -18,10 +18,10 @@
     {
         <script>
             Swal.fire({
-            icon: 'success',
-            title: 'Avaliação enviada com sucesso!',
-            showConfirmButton: false,
-            timer: 2000
+                icon: 'success',
+                title: 'Avaliação enviada com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
             });
         </script>
     }
@@ -85,12 +85,14 @@
                                     </div>
                                 </div>
 
-                                <button type="button"
+                                <a class="btn-avaliar" href="/locais/@local.Id">Ver mais</a>
+
+                                @* <button type="button"
                                         class="btn-avaliar"
                                         onclick="abrirModal('@local.Nome','@local.Id')"
                                 @(local.JaAvaliado ? "disabled" : "")>
                                     Avaliar
-                                </button>
+                                </button> *@
                             </div>
                         </div>
                     }
@@ -106,7 +108,7 @@
         </main>
 
 
-      <!-- Modal -->
+        <!-- Modal -->
         <div id="avaliarModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <span class="close" onclick="fecharModal()">&times;</span>
@@ -119,7 +121,8 @@
 
                     <div class="input-group">
                         <label for="comentario">Comentário</label>
-                        <textarea id="comentario" name="comentario" maxlength="2000" rows="5" style="width: 100%;"></textarea>
+                        <textarea id="comentario" name="comentario" maxlength="2000" rows="5"
+                            style="width: 100%;"></textarea>
                         <small id="contadorComentario">0 / 2000</small>
                     </div>
 

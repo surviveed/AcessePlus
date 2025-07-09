@@ -1,14 +1,12 @@
 ﻿using Npgsql;
 using Persistencia;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
 
 namespace AcessePlus.Persistencia
 {
-    public class Avaliacao: ConexaoBD
+    public class Avaliacao : ConexaoBD
     {
         public const string CamposTabela = "(comentario, tipo_acessibilidade, tipo, id_local, id_usuario)";
+
         public Modelo.Avaliacao ObterModelo(NpgsqlDataReader leitor)
         {
             var modelo = new Modelo.Avaliacao();
@@ -22,139 +20,118 @@ namespace AcessePlus.Persistencia
 
             return modelo;
         }
+
         public void Inserir(Modelo.Avaliacao modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = $"INSERT INTO avaliacao {CamposTabela} VALUES (@comentario, @tipo_acessibilidade, @tipo, @id_local, @id_usuario);";
 
-            sb.AppendLine(string.Format("INSERT INTO avaliacao {0}" +
-                " VALUES (@comentario,@tipo_acessibilidade,@tipo, @id_local, @id_usuario);", CamposTabela));
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("comentario", modelo.Comentario);
+                comando.Parameters.AddWithValue("tipo_acessibilidade", modelo.TipoAcessibilidade);
+                comando.Parameters.AddWithValue("tipo", modelo.Tipo);
+                comando.Parameters.AddWithValue("id_local", modelo.Local.Id);
+                comando.Parameters.AddWithValue("id_usuario", modelo.Usuario.Id);
 
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("comentario", modelo.Comentario));
-            comando.Parameters.Add(new NpgsqlParameter("tipo_acessibilidade", modelo.TipoAcessibilidade));
-            comando.Parameters.Add(new NpgsqlParameter("tipo", modelo.Tipo));
-            comando.Parameters.Add(new NpgsqlParameter("id_local", modelo.Local.Id));
-            comando.Parameters.Add(new NpgsqlParameter("id_usuario", modelo.Usuario.Id));
-
-            comando.ExecuteNonQuery();
-        } 
-        public void Excluir (int Id)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine(string.Format("DELETE FROM avaliacao" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            comando.ExecuteNonQuery();
+                comando.ExecuteNonQuery();
+            }
         }
+
+        public void Excluir(int id)
+        {
+            var sql = "DELETE FROM avaliacao WHERE id = @id;";
+
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id", id);
+                comando.ExecuteNonQuery();
+            }
+        }
+
         public void Atualizar(Modelo.Avaliacao modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = @"
+                UPDATE avaliacao 
+                SET comentario = @comentario, 
+                    tipo_acessibilidade = @tipo_acessibilidade, 
+                    tipo = @tipo, 
+                    id_local = @id_local, 
+                    id_usuario = @id_usuario
+                WHERE id = @id;";
 
-            sb.AppendLine(string.Format("UPDATE avaliacao " +
-                " SET comentario = @comentario, tipo_acessibilidade = @tipo_acessibilidade, tipo=@tipo, id_local=@id_local, id_usuario=@id_usuario" +
-                " WHERE id= @id"));
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("comentario", modelo.Comentario);
+                comando.Parameters.AddWithValue("tipo_acessibilidade", modelo.TipoAcessibilidade);
+                comando.Parameters.AddWithValue("tipo", modelo.Tipo);
+                comando.Parameters.AddWithValue("id_local", modelo.Local.Id);
+                comando.Parameters.AddWithValue("id_usuario", modelo.Usuario.Id);
+                comando.Parameters.AddWithValue("id", modelo.Id);
 
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("comentario", modelo.Comentario));
-            comando.Parameters.Add(new NpgsqlParameter("tipo_acessibilidade", modelo.TipoAcessibilidade));
-            comando.Parameters.Add(new NpgsqlParameter("tipo", modelo.Tipo));
-            comando.Parameters.Add(new NpgsqlParameter("id_local", modelo.Local.Id));
-            comando.Parameters.Add(new NpgsqlParameter("id_usuario", modelo.Usuario.Id));
-            comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
-
-            comando.ExecuteNonQuery();
+                comando.ExecuteNonQuery();
+            }
         }
+
         public List<Modelo.Avaliacao> BuscarTodos()
         {
-            List<Modelo.Avaliacao> modelos = new List<Modelo.Avaliacao>();
-
+            var modelos = new List<Modelo.Avaliacao>();
             var sql = "SELECT * FROM avaliacao;";
 
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            using (var leitor = comando.ExecuteReader())
             {
-                var modelo = ObterModelo(leitor);
-
-                modelos.Add(modelo);
+                while (leitor.Read())
+                {
+                    modelos.Add(ObterModelo(leitor));
+                }
             }
-            leitor.Close();
-
-            //somente executar este loop se for preciso acessar a propriedade local em algum momento ao fazer a query
-
-            //foreach (var modelo in modelos)
-            //{
-            //    var sqlLocal = "SELECT * FROM local WHERE id = @id;";
-            //    NpgsqlCommand comandoLocal = new NpgsqlCommand(sqlLocal, Conexao);
-            //    comandoLocal.Parameters.Add(new NpgsqlParameter("id", modelo.Local.Id));
-            //    NpgsqlDataReader leitorLocal = comandoLocal.ExecuteReader();
-
-            //    while (leitorLocal.Read())
-            //    {
-            //        var local = new Modelo.Local();
-            //        local.Id = leitorLocal.GetInt32(0);
-            //        local.Nome = leitorLocal.GetString(1);
-            //        local.Capacidade = leitorLocal.GetInt32(2);
-            //        local.Endereco = leitorLocal.GetString(3);
-            //        local.Observacoes = leitorLocal.GetString(4);
-            //        local.Cidade.Id = leitorLocal.GetInt32(5);
-            //        modelo.Local = local;
-            //    }
-            //    leitorLocal.Close();
-            //}
 
             return modelos;
         }
-        public Modelo.Avaliacao BuscarPorId(int Id)
+
+        public Modelo.Avaliacao BuscarPorId(int id)
         {
-            Modelo.Avaliacao modelo = null;
+            var sql = "SELECT * FROM avaliacao WHERE id = @id;";
 
-            List<Modelo.Avaliacao> modelos = new List<Modelo.Avaliacao>();
-
-            var sql = "SELECT * FROM avaliacao WHERE id=@id;";
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            if (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelo = ObterModelo(leitor);
+                comando.Parameters.AddWithValue("id", id);
 
-                modelos.Add(modelo);
+                using (var leitor = comando.ExecuteReader())
+                {
+                    if (leitor.Read())
+                    {
+                        return ObterModelo(leitor);
+                    }
+                }
             }
-            leitor.Close();
 
-            return modelo;
+            return null;
         }
-        public List<Modelo.Avaliacao> BuscarPorIdLocal(int IdLocal)
+
+        public List<Modelo.Avaliacao> BuscarPorIdLocal(int idLocal)
         {
-            List<Modelo.Avaliacao> modelos = new List<Modelo.Avaliacao>();
+            var modelos = new List<Modelo.Avaliacao>();
+            var sql = "SELECT * FROM avaliacao WHERE id_local = @id_local;";
 
-            var sql = "SELECT * FROM avaliacao WHERE id_local=@id_local;";
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id_local", IdLocal));
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelos.Add(ObterModelo(leitor)) ;
+                comando.Parameters.AddWithValue("id_local", idLocal);
+
+                using (var leitor = comando.ExecuteReader())
+                {
+                    while (leitor.Read())
+                    {
+                        modelos.Add(ObterModelo(leitor));
+                    }
+                }
             }
-            leitor.Close();
 
             return modelos;
         }

@@ -17,11 +17,7 @@
     }
 
     <div class="admin">
-        @if (!string.IsNullOrEmpty(usuarioLogado))
-        {
-            <partial name="/Views/Admin/Components/Menu.cshtml" />
-        }
-
+        <partial name="/Views/Admin/Components/Menu.cshtml" />
         @RenderBody()
     </div>
 

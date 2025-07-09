@@ -1,5 +1,4 @@
-﻿using AcessePlus.Modelo;
-using Npgsql;
+﻿using Npgsql;
 using Persistencia;
 
 namespace AcessePlus.Persistencia
@@ -21,7 +20,8 @@ namespace AcessePlus.Persistencia
                     Id = Convert.ToInt32(reader["Id"]),
                     Nome = reader["Nome"].ToString(),
                     Email = reader["Email"].ToString(),
-                    Senha = reader["Senha"].ToString()
+                    Senha = reader["Senha"].ToString(),
+                    Nivel = Convert.ToInt32(reader["Nivel"])
                 };
             }
 
@@ -31,10 +31,13 @@ namespace AcessePlus.Persistencia
         public void Inserir(Modelo.Usuario usuario)
         {
             using var con = ConexaoBD.GetConnection();
-            var cmd = new NpgsqlCommand("INSERT INTO Usuario (Nome, Email, Senha) VALUES (@Nome, @Email, @Senha)", con);
+            var cmd = new NpgsqlCommand(
+                "INSERT INTO Usuario (Nome, Email, Senha, Nivel) VALUES (@Nome, @Email, @Senha, @Nivel)", con);
+
             cmd.Parameters.AddWithValue("@Nome", usuario.Nome);
             cmd.Parameters.AddWithValue("@Email", usuario.Email);
             cmd.Parameters.AddWithValue("@Senha", usuario.Senha);
+            cmd.Parameters.AddWithValue("@Nivel", (int)usuario.Nivel);
 
             cmd.ExecuteNonQuery();
         }

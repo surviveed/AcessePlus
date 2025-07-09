@@ -1,87 +1,46 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AcessePlus</title>
 
-    <link rel="stylesheet" href="~/site/css/base/variables.css" />
-    <link rel="stylesheet" href="~/site/css/base/typography.css" />
-    <link rel="stylesheet" href="~/site/css/pages/home.css" />
-    <link rel="stylesheet" href="~/site/css/pages/local.css" />
-    <link rel="stylesheet" href="~/site/css/base/components.css" />
-    <link rel="stylesheet" href="~/site/css/pages/login.css" />
-
+    <!-- Estilos principais -->
+    <link rel="stylesheet" href="~/site/css/main.css" />
     <link rel="shortcut icon" href="~/images/logo.ico" type="image/x-icon" />
+
+    <!-- Seção de estilos adicionais (opcional) -->
     @await RenderSectionAsync("Styles", required: false)
 
-    @if (ViewData["Title"]?.ToString() == "Login Page")
-    {
-        <link rel="stylesheet" href="~/site/css/pages/login.css" />
-    }
-
+    <!-- Bibliotecas externas -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
 </head>
+
 <body>
-    <header class="main-header">
-        <nav class="main-header__nav">
-            <a class="main-header__logo" href="/">
-                <img class="main-header__logo-img" src="/images/logo.png" alt="Logo Acesse+" />
-            </a>
+    <!-- Cabeçalho -->
+    <partial name="/Views/Site/Components/Header.cshtml" />
 
-            <div class="main-header__menu">
-                <ul class="main-header__menu-list">
-                    <li><a href="/#quem-somos">Quem somos</a></li>
-                    <li><a asp-controller="Local" asp-action="Index">Locais</a></li>
-                    <li><a href="/gerenciador/eventos">Eventos</a></li>
-                    <li><a asp-page="/Buscar">Buscar</a></li>
-                </ul>
-            </div>
-
-            @{
-                var nomeUsuario = Context.Session.GetString("UsuarioNome");
-            }
-
-            <div class="main-header__actions">
-                @if (!string.IsNullOrEmpty(nomeUsuario))
-                {
-                    <a href="/gerenciador/logout" class="btn">Sair</a>
-                }
-                else
-                {
-                    <a href="/gerenciador/login" class="btn">Login</a>
-                }
-
-                <button class="main-header__mobile-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </nav>
-    </header>
-
+    <!-- Corpo principal -->
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!-- Rodapé -->
+    <partial name="/Views/Site/Components/Footer.cshtml" />
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script src="~/site/js/site.js" asp-append-version="true"></script>
 
+    <!-- Seção de scripts adicionais (opcional) -->
     @await RenderSectionAsync("Scripts", required: false)
-
-    <footer class="site-footer">
-        <div class="site-footer__content">
-            <p>© 2025 <strong>Acesse+</strong> - Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
 </body>
+
 </html>

@@ -1,7 +1,4 @@
-﻿@import url('../base/variables.css');
-@import url('../base/typography.css');
-
-.local-page {
+﻿.local-page {
     width: 100%;
     min-height: 100vh;
     padding: 0 var(--spacing--5);
@@ -36,62 +33,67 @@
     margin-bottom: var(--spacing-4);
     text-align: center;
 }
-  .btn-avaliar {
-        margin-top: 10px;
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
 
-    .btn-avaliar:hover {
-        background-color: #0056b3;
-    }
-    .btn-avaliar[disabled] {
-        background-color: #e0e0e0;
-        color: #9e9e9e;
-        cursor: not-allowed;
-        opacity: 0.7;
-        border: none; /* Remove a bordinha */
-        box-shadow: none; /* Remove possíveis sombras */
-        transition: none;
-    }
+.btn-avaliar {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-    .modal {
-        position: fixed;
-        z-index: 999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.5);
-    }
+.btn-avaliar:hover {
+    background-color: #0056b3;
+}
 
-    .modal-content {
-        background-color: #fff;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 500px;
-        position: relative;
-    }
+.btn-avaliar[disabled] {
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+    opacity: 0.7;
+    border: none;
+    /* Remove a bordinha */
+    box-shadow: none;
+    /* Remove possíveis sombras */
+    transition: none;
+}
 
-    .close {
-        color: #aaa;
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 28px;
-        cursor: pointer;
-    }
+.modal {
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
-    .close:hover {
-        color: black;
-    }
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
 .local-results {
     width: 100%;
 }
@@ -113,22 +115,22 @@
     background: #fdfdfd;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
-    .local-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    }
+.local-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
 
-    .local-card img {
-        width: 250px;
-        height: 100%;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
+.local-card img {
+    width: 250px;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
 
 .local-card-content {
     padding: 1.5rem 2rem;
@@ -140,17 +142,17 @@
     gap: 0.8rem;
 }
 
-    .local-card-content h3 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-    }
+.local-card-content h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
 
-    .local-card-content p {
-        font-size: 1.5rem;
-        margin: 0;
-        line-height: 1.4;
-    }
+.local-card-content p {
+    font-size: 1.5rem;
+    margin: 0;
+    line-height: 1.4;
+}
 
 .search-menu__title {
     font-size: 2rem;
@@ -208,44 +210,44 @@ select.form-control {
     gap: 1rem;
 }
 
-    .menu-actions .btn {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 600;
-        height: 48px;
-        padding: 1rem 2rem;
-        border-radius: 1rem;
-        cursor: pointer;
-        text-decoration: none;
-        transition: 0.3s all ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        box-sizing: border-box;
-    }
+.menu-actions .btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    height: 48px;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s all ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    .menu-actions .btn-primary {
-        background-color: #000;
-        color: #FFF !important;
-        border: 2px solid #000;
-    }
+.menu-actions .btn-primary {
+    background-color: #000;
+    color: #FFF !important;
+    border: 2px solid #000;
+}
 
-        .menu-actions .btn-primary:hover {
-            background-color: #333;
-            border-color: #333;
-        }
+.menu-actions .btn-primary:hover {
+    background-color: #333;
+    border-color: #333;
+}
 
-    .menu-actions .btn-secondary {
-        border: 2px solid #ddd;
-        background: #f9f9f9;
-        color: #333 !important;
-    }
+.menu-actions .btn-secondary {
+    border: 2px solid #ddd;
+    background: #f9f9f9;
+    color: #333 !important;
+}
 
-        .menu-actions .btn-secondary:hover {
-            background: #e0e0e0;
-            border-color: #ccc;
-        }
+.menu-actions .btn-secondary:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+}
 
 .no-results {
     position: absolute;
@@ -257,7 +259,7 @@ select.form-control {
     min-height: 150px;
     background: #fdfdfd;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -266,15 +268,15 @@ select.form-control {
     box-sizing: border-box;
 }
 
-    .no-results h3 {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
+.no-results h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
 
-    .no-results p {
-        font-size: 1.5rem;
-    }
+.no-results p {
+    font-size: 1.5rem;
+}
 
 @media (max-width: 1300px) {
     .local-page {
@@ -305,16 +307,17 @@ select.form-control {
         height: auto;
     }
 
-        .local-card img {
-            width: 100%;
-            height: 200px;
-        }
+    .local-card img {
+        width: 100%;
+        height: 200px;
+    }
 
     .local-card-content {
         text-align: center;
         padding: 1.5rem;
     }
 }
+
 .avaliacoes-container {
     display: flex;
     gap: 15px;
@@ -328,10 +331,6 @@ select.form-control {
     font-size: 18px;
 }
 
-    .avaliacao-item.positiva i {
-        color: green;
-    }
-
-    .avaliacao-item.negativa i {
-        color: red;
-    }
+.avaliacao-item.positiva i {
+    color: green;
+}

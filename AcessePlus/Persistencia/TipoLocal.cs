@@ -12,12 +12,11 @@ namespace AcessePlus.Persistencia
 
         public Modelo.TipoLocal ObterModelo(NpgsqlDataReader leitor)
         {
-            var modelo = new Modelo.TipoLocal();
-
-            modelo.Id = leitor.GetInt32(0);
-            modelo.Descricao = leitor.GetString(1);
-
-            return modelo;
+            return new Modelo.TipoLocal
+            {
+                Id = leitor.GetInt32(0),
+                Descricao = leitor.GetString(1)
+            };
         }
 
         public int Inserir(Modelo.TipoLocal modelo)
@@ -28,71 +27,77 @@ namespace AcessePlus.Persistencia
                 RETURNING id;
             ";
 
-            using var comando = new NpgsqlCommand(sql, Conexao);
-            comando.Parameters.AddWithValue("descricao", modelo.Descricao);
-
-            var id = comando.ExecuteScalar();
-            return Convert.ToInt32(id);
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                var id = comando.ExecuteScalar();
+                return Convert.ToInt32(id);
+            }
         }
 
-        public void Excluir(int Id)
+        public void Excluir(int id)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("DELETE FROM tipolocal WHERE id = @id");
+            var sql = "DELETE FROM tipolocal WHERE id = @id;";
 
-            using var comando = new NpgsqlCommand(sb.ToString(), Conexao);
-            comando.Parameters.AddWithValue("id", Id);
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id", id);
+                comando.ExecuteNonQuery();
+            }
         }
 
         public void Atualizar(Modelo.TipoLocal modelo)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("UPDATE tipolocal SET descricao = @descricao WHERE id = @id");
+            var sql = "UPDATE tipolocal SET descricao = @descricao WHERE id = @id;";
 
-            using var comando = new NpgsqlCommand(sb.ToString(), Conexao);
-            comando.Parameters.AddWithValue("descricao", modelo.Descricao);
-            comando.Parameters.AddWithValue("id", modelo.Id);
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                comando.Parameters.AddWithValue("id", modelo.Id);
+                comando.ExecuteNonQuery();
+            }
         }
 
         public List<Modelo.TipoLocal> BuscarTodos()
         {
-            List<Modelo.TipoLocal> modelos = new List<Modelo.TipoLocal>();
-
+            var modelos = new List<Modelo.TipoLocal>();
             var sql = "SELECT * FROM tipolocal;";
 
-            using var comando = new NpgsqlCommand(sql, Conexao);
-            using var leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            using (var leitor = comando.ExecuteReader())
             {
-                var modelo = ObterModelo(leitor);
-                modelos.Add(modelo);
+                while (leitor.Read())
+                {
+                    modelos.Add(ObterModelo(leitor));
+                }
             }
 
             return modelos;
         }
 
-        public Modelo.TipoLocal BuscarPorId(int Id)
+        public Modelo.TipoLocal BuscarPorId(int id)
         {
-            Modelo.TipoLocal modelo = null;
-
             var sql = "SELECT * FROM tipolocal WHERE id = @id;";
 
-            using var comando = new NpgsqlCommand(sql, Conexao);
-            comando.Parameters.AddWithValue("id", Id);
-
-            using var leitor = comando.ExecuteReader();
-
-            if (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelo = ObterModelo(leitor);
+                comando.Parameters.AddWithValue("id", id);
+
+                using (var leitor = comando.ExecuteReader())
+                {
+                    if (leitor.Read())
+                    {
+                        return ObterModelo(leitor);
+                    }
+                }
             }
 
-            return modelo;
+            return null;
         }
     }
 }

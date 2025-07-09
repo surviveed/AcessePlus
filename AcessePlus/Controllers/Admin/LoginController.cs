@@ -22,7 +22,7 @@ public class LoginController : Controller
         }
         else if (!email.Contains("@") || !email.Contains("."))
         {
-            ViewBag.Erro = "Email inv·lido.";
+            ViewBag.Erro = "Email inv√°lido.";
             return View();
         }
 
@@ -33,10 +33,13 @@ public class LoginController : Controller
             HttpContext.Session.SetString("UsuarioLogado", usuario.Email);
             HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
             HttpContext.Session.SetInt32("IdUsuarioLogado", usuario.Id);
+            HttpContext.Session.SetInt32("UsuarioNivel", (int)usuario.Nivel);
+            HttpContext.Session.SetString("UsuarioNivelTexto", usuario.Nivel.ToString());
+
             return RedirectToAction("Login", "Home");
         }
 
-        ViewBag.Erro = "Email ou senha inv·lidos.";
+        ViewBag.Erro = "Email ou senha inv√°lidos.";
         return View();
     }
 
@@ -47,7 +50,7 @@ public class LoginController : Controller
     }
 
     [HttpPost("register")]
-    public IActionResult Register(AcessePlus.Modelo.Usuario usuario)
+    public IActionResult Register(Modelo.Usuario usuario)
     {
         try
         {

@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public string Senha { get; set; }
         public List<Local> LocalResponsaveis { get; set; }
+        public int Nivel { get; set; }
     }
 }

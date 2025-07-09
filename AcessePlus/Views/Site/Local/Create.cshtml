@@ -74,7 +74,8 @@
 					<label for="ufSelect">Estado</label>
 					<select id="ufSelect" name="UfId" class="input" required>
 						<option value="">Selecione o estado</option>
-						@foreach (var uf in (List<AcessePlus.Modelo.Uf>)(ViewBag.Ufs ?? new List<AcessePlus.Modelo.Uf>()))
+						@foreach (var uf in (List<AcessePlus.Modelo.Uf>)(ViewBag.Ufs ?? new
+												List<AcessePlus.Modelo.Uf>()))
 						{
 							if (Model?.UfId == uf.Id)
 							{
@@ -92,7 +93,8 @@
 					<label for="cidadeSelect">Cidade</label>
 					<select id="cidadeSelect" name="CidadeId" class="input" required>
 						<option value="">Selecione a cidade</option>
-						@foreach (var cidade in (List<AcessePlus.Modelo.Cidade>)(ViewBag.Cidades ?? new List<AcessePlus.Modelo.Cidade>()))
+						@foreach (var cidade in (List<AcessePlus.Modelo.Cidade>)(ViewBag.Cidades ?? new
+												List<AcessePlus.Modelo.Cidade>()))
 						{
 							if (Model?.CidadeId == cidade.Id)
 							{
@@ -137,7 +139,7 @@
 					return;
 				}
 
-				fetch(`/Locais/BuscarUFsPorPais/${paisId}`)
+				fetch(`/locais/BuscarUFsPorPais/${paisId}`)
 					.then(res => res.json())
 					.then(ufs => {
 						ufSelect.innerHTML = '<option value="">Selecione o estado</option>';
@@ -167,7 +169,7 @@
 					return;
 				}
 
-				fetch(`/Locais/BuscarCidadesPorUf/${ufId}`)
+				fetch(`/locais/BuscarCidadesPorUf/${ufId}`)
 					.then(res => res.json())
 					.then(cidades => {
 						cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
@@ -227,7 +229,7 @@
 			});
 		});
 
-				document.querySelector('form').addEventListener('submit', function(event) {
+		document.querySelector('form').addEventListener('submit', function (event) {
 			const inputImagens = document.getElementById('Imagens');
 			if (!inputImagens.files || inputImagens.files.length === 0) {
 				event.preventDefault();
@@ -262,11 +264,10 @@
 					confirmButtonText: 'OK'
 				}).then((result) => {
 					if (result.isConfirmed) {
-						window.location.href = '/Locais';
+						window.location.href = '/locais';
 					}
 				});
 			});
 		</script>
 	}
 }
-

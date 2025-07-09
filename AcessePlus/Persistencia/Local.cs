@@ -1,6 +1,5 @@
 ﻿using Npgsql;
 using Persistencia;
-using System.ComponentModel;
 using System.Data;
 using System.Text;
 
@@ -9,25 +8,31 @@ namespace AcessePlus.Persistencia
     public class Local : ConexaoBD
     {
         public const string CamposTabela = "(nome, capacidade, endereco, id_cidade, id_tipo_local)";
+
         public Modelo.Local ObterModelo(NpgsqlDataReader leitor)
         {
-            var modelo = new Modelo.Local();
-
-            modelo.Id = leitor.GetInt32(leitor.GetOrdinal("id"));
-            modelo.Nome = leitor.GetString(leitor.GetOrdinal("nome"));
-            modelo.Capacidade = leitor.GetInt32(leitor.GetOrdinal("capacidade"));
-            modelo.Endereco = leitor.GetString(leitor.GetOrdinal("endereco"));
-
-            modelo.TipoLocal = new Modelo.TipoLocal
+            var modelo = new Modelo.Local
             {
-                Id = leitor.GetInt32(leitor.GetOrdinal("tipo_local_id")),
-                Descricao = leitor.GetString(leitor.GetOrdinal("tipo_local_descricao"))
+                Id = leitor.GetInt32(leitor.GetOrdinal("id")),
+                Nome = leitor.GetString(leitor.GetOrdinal("nome")),
+                Capacidade = leitor.GetInt32(leitor.GetOrdinal("capacidade")),
+                Endereco = leitor.GetString(leitor.GetOrdinal("endereco")),
+                Cidade = new Modelo.Cidade
+                {
+                    Id = leitor.GetInt32(leitor.GetOrdinal("id_cidade"))
+                }
             };
 
-            modelo.Cidade = new Modelo.Cidade
+            // Verifica se ambas as colunas existem e não são nulas
+            if (PossuiColuna(leitor, "tipo_local_id") && !leitor.IsDBNull(leitor.GetOrdinal("tipo_local_id")) &&
+                PossuiColuna(leitor, "tipo_local_descricao") && !leitor.IsDBNull(leitor.GetOrdinal("tipo_local_descricao")))
             {
-                Id = leitor.GetInt32(leitor.GetOrdinal("id_cidade"))
-            };
+                modelo.TipoLocal = new Modelo.TipoLocal
+                {
+                    Id = leitor.GetInt32(leitor.GetOrdinal("tipo_local_id")),
+                    Descricao = leitor.GetString(leitor.GetOrdinal("tipo_local_descricao"))
+                };
+            }
 
             return modelo;
         }
@@ -36,107 +41,115 @@ namespace AcessePlus.Persistencia
         public int Inserir(Modelo.Local modelo)
         {
             var sql = $@"
-        INSERT INTO local {CamposTabela}
-        VALUES (@nome,@capacidade,@endereco,@id_cidade,@id_tipo_local)
-        RETURNING id;";
+                INSERT INTO local {CamposTabela}
+                VALUES (@nome, @capacidade, @endereco, @id_cidade, @id_tipo_local)
+                RETURNING id;";
 
-            using var comando = new NpgsqlCommand(sql, Conexao);
-            comando.Parameters.AddWithValue("nome", modelo.Nome);
-            comando.Parameters.AddWithValue("capacidade", modelo.Capacidade);
-            comando.Parameters.AddWithValue("endereco", modelo.Endereco);
-            comando.Parameters.AddWithValue("id_cidade", modelo.Cidade.Id);
-            comando.Parameters.AddWithValue("id_tipo_local", modelo.TipoLocal.Id);
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("nome", modelo.Nome);
+                comando.Parameters.AddWithValue("capacidade", modelo.Capacidade);
+                comando.Parameters.AddWithValue("endereco", modelo.Endereco);
+                comando.Parameters.AddWithValue("id_cidade", modelo.Cidade.Id);
+                comando.Parameters.AddWithValue("id_tipo_local", modelo.TipoLocal.Id);
 
-            var id = comando.ExecuteScalar();
-            return Convert.ToInt32(id);
+                var id = comando.ExecuteScalar();
+                return Convert.ToInt32(id);
+            }
         }
 
-        public void Excluir(int Id)
+        public void Excluir(int id)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = "DELETE FROM local WHERE id = @id;";
 
-            sb.AppendLine(string.Format("DELETE FROM local" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id", id);
+                comando.ExecuteNonQuery();
+            }
         }
+
         public void Atualizar(Modelo.Local modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = @"
+                UPDATE local 
+                SET nome = @nome, capacidade = @capacidade, endereco = @endereco, 
+                    id_tipo_local = @id_tipo_local, id_cidade = @id_cidade 
+                WHERE id = @id;";
 
-            sb.AppendLine(string.Format("UPDATE local " +
-                " SET nome = @nome, capacidade = @capacidade, endereco=@endereco, id_tipo_local=@id_tipo_local, id_cidade=@id_cidade" +
-                " WHERE id= @id"));
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("nome", modelo.Nome);
+                comando.Parameters.AddWithValue("capacidade", modelo.Capacidade);
+                comando.Parameters.AddWithValue("endereco", modelo.Endereco);
+                comando.Parameters.AddWithValue("id_tipo_local", modelo.TipoLocal.Id);
+                comando.Parameters.AddWithValue("id_cidade", modelo.Cidade.Id);
+                comando.Parameters.AddWithValue("id", modelo.Id);
 
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("nome", modelo.Nome));
-            comando.Parameters.Add(new NpgsqlParameter("capacidade", modelo.Capacidade));
-            comando.Parameters.Add(new NpgsqlParameter("endereco", modelo.Endereco));
-            comando.Parameters.Add(new NpgsqlParameter("id_tipo_local", modelo.TipoLocal.Id));
-            comando.Parameters.Add(new NpgsqlParameter("id_cidade", modelo.Cidade.Id));
-            comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
-
-            comando.ExecuteNonQuery();
+                comando.ExecuteNonQuery();
+            }
         }
+
         public List<Modelo.Local> BuscarTodos()
         {
-            List<Modelo.Local> modelos = new List<Modelo.Local>();
-
+            var modelos = new List<Modelo.Local>();
             var sql = @"
-SELECT 
-    l.id,
-    l.nome,
-    l.capacidade,
-    l.endereco,
-    tl.id AS tipo_local_id,
-    tl.descricao AS tipo_local_descricao,
-    l.id_cidade
-FROM local l
-INNER JOIN tipolocal tl ON l.id_tipo_local = tl.id;";
+                SELECT 
+                    l.id,
+                    l.nome,
+                    l.capacidade,
+                    l.endereco,
+                    tl.id AS tipo_local_id,
+                    tl.descricao AS tipo_local_descricao,
+                    l.id_cidade
+                FROM local l
+                INNER JOIN tipolocal tl ON l.id_tipo_local = tl.id;";
 
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            using (var leitor = comando.ExecuteReader())
             {
-                var modelo = ObterModelo(leitor);
-
-                modelos.Add(modelo);
+                while (leitor.Read())
+                {
+                    modelos.Add(ObterModelo(leitor));
+                }
             }
-            leitor.Close();
 
             return modelos;
         }
-        public Modelo.Local BuscarPorId(int Id)
+
+        public Modelo.Local BuscarPorId(int id)
         {
-            Modelo.Local modelo = null;
+            var sql = "SELECT * FROM local WHERE id = @id;";
 
-            List<Modelo.Local> modelos = new List<Modelo.Local>();
-
-            var sql = "SELECT * FROM local WHERE id=@id;";
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            if (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelo = ObterModelo(leitor);
+                comando.Parameters.AddWithValue("id", id);
 
-                modelos.Add(modelo);
+                using (var leitor = comando.ExecuteReader())
+                {
+                    if (leitor.Read())
+                    {
+                        return ObterModelo(leitor);
+                    }
+                }
             }
-            leitor.Close();
 
-            return modelo;
+            return null;
+        }
+
+        private bool PossuiColuna(IDataRecord leitor, string nomeColuna)
+        {
+            for (int i = 0; i < leitor.FieldCount; i++)
+            {
+                if (leitor.GetName(i).Equals(nomeColuna, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
         }
     }
 }

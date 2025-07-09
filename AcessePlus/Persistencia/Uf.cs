@@ -1,117 +1,107 @@
 ﻿using Npgsql;
 using Persistencia;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
 
 namespace AcessePlus.Persistencia
 {
     public class Uf : ConexaoBD
     {
-        public const string CamposTabela = "(id_pais,descricao,codigo_ibge)";
+        public const string CamposTabela = "(id_pais, descricao, codigo_ibge)";
+
         public Modelo.Uf ObterModelo(NpgsqlDataReader leitor)
         {
-            var modelo = new Modelo.Uf();
-
-            modelo.Id = leitor.GetInt32(0);
-
-            modelo.Pais = new Modelo.Pais(); // instanciar antes de acessar propriedades
-
-            modelo.Pais.Id = leitor.GetInt32(1);
-            modelo.Descricao = leitor.GetString(2);
-            modelo.CodigoIbge = leitor.GetInt32(3);
-
-            return modelo;
+            return new Modelo.Uf
+            {
+                Id = leitor.GetInt32(0),
+                Pais = new Modelo.Pais
+                {
+                    Id = leitor.GetInt32(1)
+                },
+                Descricao = leitor.GetString(2),
+                CodigoIbge = leitor.GetInt32(3)
+            };
         }
 
         public void Inserir(Modelo.Uf modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = $"INSERT INTO uf {CamposTabela} VALUES (@id_pais, @descricao, @codigo_ibge);";
 
-            sb.AppendLine(string.Format("INSERT INTO uf {0}" +
-                " VALUES (@id_pais,@descricao,@codigo_ibge);", CamposTabela));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id_pais", modelo.Pais.Id));
-            comando.Parameters.Add(new NpgsqlParameter("descricao", modelo.Descricao));
-            comando.Parameters.Add(new NpgsqlParameter("codigo_ibge", modelo.CodigoIbge));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id_pais", modelo.Pais.Id);
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                comando.Parameters.AddWithValue("codigo_ibge", modelo.CodigoIbge);
+                comando.ExecuteNonQuery();
+            }
         }
-        public void Excluir(int Id)
+
+        public void Excluir(int id)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = "DELETE FROM uf WHERE id = @id;";
 
-            sb.AppendLine(string.Format("DELETE FROM uf" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id", id);
+                comando.ExecuteNonQuery();
+            }
         }
+
         public void Atualizar(Modelo.Uf modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = @"
+                UPDATE uf 
+                SET id_pais = @id_pais, descricao = @descricao, codigo_ibge = @codigo_ibge 
+                WHERE id = @id;";
 
-            sb.AppendLine(string.Format("UPDATE uf " +
-                " SET id_pais=@id_pais, descricao = @descricao,codigo_ibge=@codigo_ibge" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id_pais", modelo.Pais.Id));
-            comando.Parameters.Add(new NpgsqlParameter("descricao", modelo.Descricao));
-            comando.Parameters.Add(new NpgsqlParameter("codigo_ibge", modelo.CodigoIbge));
-            comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id_pais", modelo.Pais.Id);
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                comando.Parameters.AddWithValue("codigo_ibge", modelo.CodigoIbge);
+                comando.Parameters.AddWithValue("id", modelo.Id);
+                comando.ExecuteNonQuery();
+            }
         }
+
         public List<Modelo.Uf> BuscarTodos()
         {
-            List<Modelo.Uf> modelos = new List<Modelo.Uf>();
-
+            var modelos = new List<Modelo.Uf>();
             var sql = "SELECT * FROM uf;";
 
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            using (var leitor = comando.ExecuteReader())
             {
-                var modelo = ObterModelo(leitor);
-
-                modelos.Add(modelo);
+                while (leitor.Read())
+                {
+                    modelos.Add(ObterModelo(leitor));
+                }
             }
-            leitor.Close();
 
             return modelos;
         }
-        public Modelo.Uf BuscarPorId(int Id)
+
+        public Modelo.Uf BuscarPorId(int id)
         {
-            Modelo.Uf modelo = null;
+            var sql = "SELECT * FROM uf WHERE id = @id;";
 
-            List<Modelo.Uf> modelos = new List<Modelo.Uf>();
-
-            var sql = "SELECT * FROM uf WHERE id=@id;";
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            if (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelo = ObterModelo(leitor);
+                comando.Parameters.AddWithValue("id", id);
 
-                modelos.Add(modelo);
+                using (var leitor = comando.ExecuteReader())
+                {
+                    if (leitor.Read())
+                    {
+                        return ObterModelo(leitor);
+                    }
+                }
             }
-            leitor.Close();
 
-            return modelo;
+            return null;
         }
     }
 }

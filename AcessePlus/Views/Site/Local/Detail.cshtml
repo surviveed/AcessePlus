@@ -1,0 +1,121 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Detail";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/site/css/pages/evento.css" />
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData["Sucesso"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Avaliação enviada com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        </script>
+    }
+}
+
+<div class="evento-page">
+
+    <div class="evento-banner">
+        <img src="@ViewBag.Local.ImagemUrl" alt="Banner do evento @ViewBag.Local.Nome" />
+    </div>
+
+    <div class="evento-detalhes">
+        <h1 class="evento-titulo">@ViewBag.Local.Nome</h1>
+        <p class="evento-descricao">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto ea at unde
+            accusantium fuga error blanditiis quos earum ex? Asperiores neque cupiditate quis numquam repudiandae nisi
+            error officiis possimus nihil.
+
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem praesentium doloremque, eligendi excepturi
+            ducimus officia rem non iure sapiente placeat itaque recusandae ab sequi corrupti. Tempore earum sit aperiam
+            natus!
+        </p>
+
+        <div class="evento-info">
+            @* <p><strong>Data:</strong> @ViewBag.Local.Data.ToString("dd/MM/yyyy HH:mm")</p> *@
+            @* <p><strong>Local:</strong> @ViewBag.Local.Local.Nome - @ViewBag.Local.Local.Endereco,
+                @ViewBag.Local.Local.Cidade/@ViewBag.Local.Local.Uf
+            </p> *@
+            @* <p><strong>Capacidade:</strong> @ViewBag.Local.Local.Capacidade pessoas</p> *@
+        </div>
+
+        @* <a class="btn btn-primary" href="@ViewBag.Local.LinkExterno" target="_blank" rel="noopener">
+            Garanta seu ingresso
+        </a> *@
+
+        <div class="avaliacoes-container">
+            <h2>Avaliações</h2>
+            @* <div class="avaliacao-item positiva">
+                <i class="fas fa-thumbs-up"></i> <span>@ViewBag.Local.QtdAvaliacoesPositivas</span>
+            </div>
+            <div class="avaliacao-item negativa">
+                <i class="fas fa-thumbs-down"></i> <span>@ViewBag.Local.QtdAvaliacoesNegativas</span>
+            </div> *@
+        </div>
+
+        @{
+            var nomeUsuario = Context.Session.GetString("UsuarioNome");
+        }
+
+        @if (!string.IsNullOrEmpty(nomeUsuario))
+        {
+            <button class="btn btn-secundario" onclick="abrirModal('@ViewBag.Local.Nome', '@ViewBag.Local.Id')">Avaliar este
+                evento</button>
+        }
+
+    </div>
+
+    <!-- Modal de Avaliação -->
+    <div id="avaliarModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2 class="login-title">Avaliação de <span id="nomeLocalSpan"></span></h2>
+
+            <form asp-action="Avaliar" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="LocalId" name="LocalId" value="@ViewBag.Local.Local.Id" />
+                <input type="hidden" id="EventoId" name="EventoId" value="@ViewBag.Local.Id" />
+
+                <div class="input-group">
+                    <label for="comentario">Comentário</label>
+                    <textarea id="comentario" name="comentario" maxlength="2000" rows="5"
+                        style="width: 100%;"></textarea>
+                    <small id="contadorComentario">0 / 2000</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="tipoAcessibilidade">Tipo de Acessibilidade</label>
+                    <select id="tipoAcessibilidade" name="tipoAcessibilidade" class="input" required>
+                        <option value="">Selecione</option>
+                        <option value="A">Auditiva</option>
+                        <option value="V">Visual</option>
+                        <option value="L">Locomoção</option>
+                        <option value="S">Sensorial</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="tipo">Tipo</label>
+                    <select id="tipo" name="tipo" class="input" required>
+                        <option value="">Selecione</option>
+                        <option value="P">Positiva</option>
+                        <option value="N">Negativa</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+</div>

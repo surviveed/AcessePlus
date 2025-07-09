@@ -1,6 +1,3 @@
-@import url('../base/variables.css');
-@import url('../base/typography.css');
-
 .text {
     font-family: "Inter", sans-serif;
     line-height: 100%;
@@ -60,7 +57,7 @@
 }
 
 .text--white {
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
 
 .text--black {
@@ -86,21 +83,6 @@
 
 .title--white {
     color: #FFFFFF;
-}
-
-html {
-    font-size: 62.5%;
-}
-
-body {
-    font-family: "Inter", sans-serif;
-    line-height: 1.6;
-    color: var(--text-color-dark);
-    font-weight: 400;
-    background: radial-gradient(circle at top left, var(--background-gradient-start) 26%, var(--background-gradient-mid) 100%, var(--background-gradient-end) 100%), var(--background-fallback);
-    min-height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
 }
 
 .text {
@@ -131,6 +113,11 @@ body {
 .text--40 {
     font-size: 4rem;
     letter-spacing: -0.07em;
+}
+
+.text--70{
+    font-size: 7rem;
+     line-height: 1.2;
 }
 
 .text--fw200 {
@@ -169,6 +156,10 @@ body {
     color: var(--text-color-dark);
 }
 
+.text--gray{
+    color: #000000b3;
+}
+
 .text--toupper {
     text-transform: uppercase;
 }
@@ -192,23 +183,23 @@ body {
 }
 
 .mb-1 {
-    margin-bottom: var(--spacing-1) !important;
+    margin-bottom: 1rem !important;
 }
 
 .mb-2 {
-    margin-bottom: var(--spacing-2) !important;
+    margin-bottom: 2rem !important;
 }
 
 .mb-3 {
-    margin-bottom: var(--spacing-3) !important;
+    margin-bottom: 3rem !important;
 }
 
 .mb-4 {
-    margin-bottom: var(--spacing-4) !important;
+    margin-bottom: 4rem !important;
 }
 
 .mb-5 {
-    margin-bottom: var(--spacing-5) !important;
+    margin-bottom: 5rem !important;
 }
 
 input,

@@ -5,23 +5,23 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="home-page home-page--full-gradient">
+<div class="home-page">
     <div class="home-intro-banner">
-        <div class="home-intro-banner__text">
-            <h1 class="home-intro-banner__title">Descubra espaços que conectam você ao mundo</h1>
-            <p class="home-intro-banner__subtitle">Descubra locais acessíveis com informações confiáveis e atualizadas, avalie e compartilhe suas experiências, e contribua para uma comunidade mais inclusiva. Participe também de eventos que promovem a acessibilidade e a inclusão social.</p>
-            <a href="/Locais" class="btn">Conhecer locais</a>
+        <div class="text">
+            <h1 class="text--70 text--fw800 text--black mb-2">Descubra espaÃ§os que conectam vocÃª ao mundo</h1>
+            <p class="text--20 text--gray mb-2">Descubra locais acessÃ­veis com informaÃ§Ãµes confiÃ¡veis e atualizadas,
+                avalie e compartilhe suas experiÃªncias, e contribua para uma comunidade mais inclusiva. Participe tambÃ©m
+                de eventos que promovem a acessibilidade e a inclusÃ£o social.</p>
+            <a href="/locais" class="btn">Conhecer locais</a>
         </div>
-        <div class="home-intro-banner__image">
-            <img src="/images/logo.png" alt="Logo Acesse+" />
+        <div class="image">
+            <img src="/images/logo-big.png" alt="Logo Acesse+" />
         </div>
     </div>
 
     <div class="home-main-content">
-        <p class="highlight-paragraph">Confira alguns locais cadastrados no Acesse+</p>
-
+        <p class="highlight-paragraph text--white">Confira alguns locais cadastrados no Acesse+</p>
         <div class="home-banner swiper">
-
             <div class="swiper-wrapper">
                 @foreach (var local in Model.Locais)
                 {
@@ -39,25 +39,39 @@
         </div>
     </div>
 
-    <section id="quem-somos" class="home-intro-banner quem-somos-banner">
-        <div class="home-intro-banner__text">
-            <h2 class="home-intro-banner__title">Quem somos nós</h2>
-            <p class="home-intro-banner__subtitle">
-                O <strong>Acesse+</strong> é um aplicativo colaborativo focado em acessibilidade, permitindo que usuários mapeiem, avaliem e compartilhem informações sobre locais públicos acessíveis. Seu objetivo é facilitar a vida de pessoas com deficiência, oferecendo um banco de dados atualizado sobre estabelecimentos com rampas, banheiros adaptados e sinalização para deficientes visuais.<br><br>
-                Os usuários podem cadastrar novos locais, adicionar fotos, avaliar a acessibilidade e deixar comentários com sugestões e experiências. Além disso, é possível gerenciar e participar de eventos relacionados à acessibilidade, promovendo a inclusão social e a melhoria das condições de acessibilidade.<br><br>
-                A aplicação foi desenvolvida por
-                <strong><a href="https://github.com/gabrielaPLMPRO" target="_blank" rel="noopener noreferrer">Gabriela</a></strong>,
-                <strong><a href="https://github.com/surviveed" target="_blank" rel="noopener noreferrer">Francisco</a></strong> e
-                <strong><a href="https://github.com/leonardobls" target="_blank" rel="noopener noreferrer">Leonardo</a></strong>
-                com o propósito de incentivar a colaboração da comunidade e tornar as cidades mais acessíveis e igualitárias.
-            </p>
+    <div id="quem-somos" class="quem-somos">
+        <div class="card">
+            <div class="content">
+                <h2 class="text--30 text--fw700 mb-2">Quem somos nÃ³s</h2>
+                <p class="text mb-2">
+                    O <strong>Acesse+</strong> Ã© um aplicativo colaborativo focado em acessibilidade, permitindo que
+                    usuÃ¡rios mapeiem, avaliem e compartilhem informaÃ§Ãµes sobre locais pÃºblicos acessÃ­veis. Seu objetivo
+                    Ã©
+                    facilitar a vida de pessoas com deficiÃªncia, oferecendo um banco de dados atualizado sobre
+                    estabelecimentos com rampas, banheiros adaptados e sinalizaÃ§Ã£o para deficientes visuais.<br><br>
+                    Os usuÃ¡rios podem cadastrar novos locais, adicionar fotos, avaliar a acessibilidade e deixar
+                    comentÃ¡rios
+                    com sugestÃµes e experiÃªncias. AlÃ©m disso, Ã© possÃ­vel gerenciar e participar de eventos relacionados
+                    Ã 
+                    acessibilidade, promovendo a inclusÃ£o social e a melhoria das condiÃ§Ãµes de acessibilidade.<br><br>
+                    A aplicaÃ§Ã£o foi desenvolvida por
+                    <strong><a href="https://github.com/gabrielaPLMPRO" target="_blank"
+                            rel="noopener noreferrer">Gabriela</a></strong>,
+                    <strong><a href="https://github.com/surviveed" target="_blank"
+                            rel="noopener noreferrer">Francisco</a></strong> e
+                    <strong><a href="https://github.com/leonardobls" target="_blank"
+                            rel="noopener noreferrer">Leonardo</a></strong>
+                    com o propÃ³sito de incentivar a colaboraÃ§Ã£o da comunidade e tornar as cidades mais acessÃ­veis e
+                    igualitÃ¡rias.
+                </p>
+            </div>
+            <div class="images">
+                <img src="/images/nos.png" alt="Logo Acesse+" />
+                <img src="/images/nos.png" alt="Logo Acesse+" />
+                <img src="/images/nos.png" alt="Logo Acesse+" />
+            </div>
         </div>
-        <div class="home-intro-banner__image">
-            <img src="/images/nos.png" alt="Logo Acesse+" />
-        </div>
-    </section>
-
-
+    </div>
 </div>
 
 @section Scripts {
@@ -86,7 +100,7 @@
                 el: '.swiper-pagination',
                 clickable: true,
             },
-            
+
             breakpoints: {
                 320: {
                     slidesPerView: 1,

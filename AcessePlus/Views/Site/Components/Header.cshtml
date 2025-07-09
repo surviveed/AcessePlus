@@ -1,3 +1,43 @@
-<header class="header">
-    <a href="" class="link">Home</a>
+<header class="main-header">
+    <nav class="nav">
+        <a class="logo" href="/">
+            <img class="logo-img" src="/images/logo.png" alt="Logo Acesse+" />
+        </a>
+
+        <div class="menu">
+            <ul class="menu-list">
+                <li><a href="/#quem-somos">Quem somos</a></li>
+                <li><a asp-controller="Local" asp-action="Index">Locais</a></li>
+                <li><a href="/eventos">Eventos</a></li>
+                <li><a asp-page="/Buscar">Buscar</a></li>
+            </ul>
+        </div>
+
+        @{
+            var nomeUsuario = Context.Session.GetString("UsuarioNome");
+            var nivel = Context.Session.GetInt32("UsuarioNivel");
+        }
+
+        <div class="actions">
+            @if (string.IsNullOrEmpty(nomeUsuario))
+            {
+                <a href="/gerenciador/login" class="btn">Login</a>
+            }
+            else
+            {
+                <a href="/gerenciador/logout" class="btn">Sair</a>
+
+                if (nivel == 1 || nivel == 2)
+                {
+                    <a href="/gerenciador" class="btn">Admin</a>
+                }
+            }
+
+            <button class="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
 </header>

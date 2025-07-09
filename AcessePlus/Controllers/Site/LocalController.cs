@@ -48,9 +48,9 @@ namespace AcessePlus.Controllers.Site
                 Capacidade = l.Capacidade,
                 TipoLocalDescricao = l.TipoLocal?.Descricao ?? "",
                 ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id }),
-                JaAvaliado= usuarioLogado!=null ? l.Avaliacoes.Any(x=>x.Usuario.Id==usuarioLogado):false,
-                QtdAvaliacoesPositivas= l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Positiva),
-                QtdAvaliacoesNegativas= l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Negativa),
+                JaAvaliado = usuarioLogado != null ? l.Avaliacoes.Any(x => x.Usuario.Id == usuarioLogado) : false,
+                QtdAvaliacoesPositivas = l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Positiva),
+                QtdAvaliacoesNegativas = l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Negativa),
             }).ToList();
 
             var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
@@ -64,7 +64,7 @@ namespace AcessePlus.Controllers.Site
                 Capacidade = capacidade
             };
 
-            return View(viewModel); 
+            return View(viewModel);
         }
         private void CarregarListasParaView(int? paisId, int? ufId, int? tipoLocalId = null)
         {
@@ -192,7 +192,7 @@ namespace AcessePlus.Controllers.Site
         public IActionResult Avaliar(int LocalId, string comentario, string tipoAcessibilidade, string tipo)
         {
             var usuarioLogado = HttpContext.Session.GetInt32("IdUsuarioLogado");
-            if (usuarioLogado==0 || usuarioLogado ==null )
+            if (usuarioLogado == 0 || usuarioLogado == null)
                 return RedirectToAction("Index", "Login");
 
             // Validações básicas
@@ -204,8 +204,8 @@ namespace AcessePlus.Controllers.Site
 
             new Negocio.Avaliacao().Salvar(new Modelo.Avaliacao
             {
-                Local = new Local() { Id=LocalId},
-                Usuario = new Usuario(){Id= usuarioLogado.Value},
+                Local = new Local() { Id = LocalId },
+                Usuario = new Usuario() { Id = usuarioLogado.Value },
                 Comentario = comentario,
                 TipoAcessibilidade_Enum = (Modelo.Avaliacao.eTipoAcessibilidade)Convert.ToChar(tipoAcessibilidade),
                 Tipo_Enum = (Modelo.Avaliacao.eTipo)Convert.ToChar(tipo)
@@ -250,6 +250,13 @@ namespace AcessePlus.Controllers.Site
             var primeiraImagem = imagens.First();
 
             return File(primeiraImagem.Imagem, "image/jpeg");
+        }
+
+        [Route("/locais/{Id}")]
+        public IActionResult Detail(int Id)
+        {
+            ViewBag.Local = new Negocio.Local().BuscarPorId(Id);
+            return View();
         }
     }
 }

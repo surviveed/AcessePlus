@@ -1,91 +1,151 @@
 @{
-    Layout = "~/Views/Admin/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Lista de Eventos (Público)";
+    Layout = "_Layout";
+    ViewData["Title"] = "Eventos";
 }
 
-<div class="productions">
-    <div class="header">
-        <div class="left">
-            <a class="button button--back" href="/">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                     fill="#000000">
-                    <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
-                </svg>
-                Voltar ao Início
-            </a>
-            <div class="breadcrumbs">
-                <a href="/">Início</a>
-                <span>Listagem de Eventos</span>
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/site/css/pages/local.css" />
+}
+
+@section Scripts {
+    <script src="~/site/js/pages/local.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData["Sucesso"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Avaliação enviada com sucesso!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        </script>
+    }
+}
+
+<div class="local-page">
+
+    <aside class="search-menu">
+        <h2 class="search-menu__title">Filtros de Busca</h2>
+
+        <form asp-action="Index" method="get" class="search-form" id="search-form">
+
+            @* <div class="form-group">
+                <label asp-for="Nome" class="form-label">Nome do Local</label>
+                <input asp-for="Nome" class="form-control" placeholder="Digite o nome..." />
             </div>
-            <div class="title">Lista de Eventos</div>
-        </div>
-        <div class="right">
-            <a class="button button--add" href="/gerenciador/eventos/edit">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                     fill="#000000">
-                    <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-                </svg>
-                Adicionar
-            </a>
-        </div>
-    </div>
 
-    <div class="content">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Descrição</th>
-                    <th>Local</th>
-                    <th>Tipo</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var evento in ViewBag.Eventos)
-                {
-                    <tr id="row">
-                        <td>@evento.Id</td>
-                        <td>@evento.Nome</td>
-                        <td>@evento.Descricao</td>
-                        <td>@(evento.Local?.Nome ?? "N/A")</td>
-                        <td>@(evento.TipoEvento?.Descricao ?? "N/A")</td>
-                        <td>
-                            <div class="buttons-wrapper">
-                                <a href="/gerenciador/eventos/edit/@evento.Id" class="button button--edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                         width="24px" fill="#000000">
-                                        <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-                                    </svg>
-                                    Editar
-                                </a>
-                                <a href="/gerenciador/eventos/delete-form/@evento.Id" class="button button--delete">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                                         width="24px" fill="#000000">
-                                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                                    </svg>
-                                    Excluir
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+            <div class="form-group">
+                <label asp-for="TipoLocalId" class="form-label">Tipo de Local</label>
+                <select asp-for="TipoLocalId" asp-items="Model.TiposDeLocal" class="form-control">
+                    <option value="">Todos os tipos</option>
+                </select>
+            </div>
 
-    <ul class="pagination">
-        @for (int i = 1; i <= ViewBag.TotalPages; i++)
-        {
-            if (i == ViewBag.CurrentPage)
+            <div class="form-group">
+                <label asp-for="Capacidade" class="form-label">Capacidade Mínima</label>
+                <input asp-for="Capacidade" type="number" min="0" class="form-control" placeholder="Ex: 50" />
+            </div> *@
+
+        </form>
+
+        <div class="menu-actions">
+            <button type="submit" form="search-form" class="btn btn-primary">Buscar</button>
+            <a class="btn btn-secondary" asp-action="Create">Adicionar novo local</a>
+        </div>
+    </aside>
+
+    <div class="main-content-area">
+
+        <h1 class="local-title">Encontre o Local Ideal</h1>
+
+        <main class="local-results">
+            @* @if (Model.Resultados.Any())
             {
-                <li><a class="active" href="/gerenciador/eventos?page=@i">@i</a></li>
+                <div class="cards-container">
+                    @foreach (var local in Model.Resultados)
+                    {
+                        <div class="local-card" tabindex="0" role="button" aria-label="Local @local.Nome">
+                            <img src="@local.ImagemUrl" alt="Imagem do local @local.Nome" />
+                            <div class="local-card-content">
+                                <h3>@local.Nome</h3>
+                                <p>@local.Endereco - @local.Cidade/@local.Uf</p>
+                                <p>Capacidade: @local.Capacidade</p>
+
+                                <div class="avaliacoes-container">
+                                    <div class="avaliacao-item positiva">
+                                        <i class="fas fa-thumbs-up"></i><span>@local.QtdAvaliacoesPositivas</span>
+                                    </div>
+                                    <div class="avaliacao-item negativa">
+                                        <i class="fas fa-thumbs-down"></i><span>@local.QtdAvaliacoesNegativas</span>
+                                    </div>
+                                </div>
+
+                                <button type="button"
+                                        class="btn-avaliar"
+                                        onclick="abrirModal('@local.Nome','@local.Id')"
+                                @(local.JaAvaliado ? "disabled" : "")>
+                                    Avaliar
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
             }
             else
             {
-                <li><a href="/gerenciador/eventos?page=@i">@i</a></li>
-            }
-        }
-    </ul>
+                <div class="no-results">
+                    <h3>Nenhum local encontrado</h3>
+                    <p>Tente ajustar os filtros da sua busca.</p>
+                </div>
+            } *@
+        </main>
+
+
+        <!-- Modal -->
+        <div id="avaliarModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="fecharModal()">&times;</span>
+                <h2 class="login-title">Avaliação de <span id="nomeLocalSpan"></span></h2>
+
+                <form asp-action="Avaliar" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" id="LocalId" name="LocalId" />
+
+                    <div class="input-group">
+                        <label for="comentario">Comentário</label>
+                        <textarea id="comentario" name="comentario" maxlength="2000" rows="5"
+                            style="width: 100%;"></textarea>
+                        <small id="contadorComentario">0 / 2000</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipoAcessibilidade">Tipo de Acessibilidade</label>
+                        <select id="tipoAcessibilidade" name="tipoAcessibilidade" class="input" required>
+                            <option value="">Selecione</option>
+                            <option value="A">Auditiva</option>
+                            <option value="V">Visual</option>
+                            <option value="L">Locomoção</option>
+                            <option value="S">Sensorial</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" name="tipo" class="input" required>
+                            <option value="">Selecione</option>
+                            <option value="P">Positiva</option>
+                            <option value="N">Negativa</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
 </div>

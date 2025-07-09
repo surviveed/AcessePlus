@@ -1,107 +1,95 @@
 ﻿using Npgsql;
 using Persistencia;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
 
 namespace AcessePlus.Persistencia
 {
     public class TipoEvento : ConexaoBD
     {
         public const string CamposTabela = "(descricao)";
+
         public Modelo.TipoEvento ObterModelo(NpgsqlDataReader leitor)
         {
-            var modelo = new Modelo.TipoEvento();
-
-            modelo.Id = leitor.GetInt32(0);
-            modelo.Descricao = leitor.GetString(1);
-
-            return modelo;
+            return new Modelo.TipoEvento
+            {
+                Id = leitor.GetInt32(0),
+                Descricao = leitor.GetString(1)
+            };
         }
+
         public void Inserir(Modelo.TipoEvento modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = $"INSERT INTO tipo_evento {CamposTabela} VALUES (@descricao);";
 
-            sb.AppendLine(string.Format("INSERT INTO tipo_evento {0}" +
-                " VALUES (@descricao);", CamposTabela));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("descricao", modelo.Descricao));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                comando.ExecuteNonQuery();
+            }
         }
-        public void Excluir(int Id)
+
+        public void Excluir(int id)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = "DELETE FROM tipo_evento WHERE id = @id;";
 
-            sb.AppendLine(string.Format("DELETE FROM tipo_evento" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("id", id);
+                comando.ExecuteNonQuery();
+            }
         }
+
         public void Atualizar(Modelo.TipoEvento modelo)
         {
-            StringBuilder sb = new StringBuilder();
+            var sql = "UPDATE tipo_evento SET descricao = @descricao WHERE id = @id;";
 
-            sb.AppendLine(string.Format("UPDATE tipo_evento " +
-                " SET descricao = @descricao" +
-                " WHERE id= @id"));
-
-            NpgsqlCommand comando = new NpgsqlCommand(sb.ToString(), Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("descricao", modelo.Descricao));
-            comando.Parameters.Add(new NpgsqlParameter("id", modelo.Id));
-
-            comando.ExecuteNonQuery();
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            {
+                comando.Parameters.AddWithValue("descricao", modelo.Descricao);
+                comando.Parameters.AddWithValue("id", modelo.Id);
+                comando.ExecuteNonQuery();
+            }
         }
+
         public List<Modelo.TipoEvento> BuscarTodos()
         {
-            List<Modelo.TipoEvento> modelos = new List<Modelo.TipoEvento>();
-
+            var modelos = new List<Modelo.TipoEvento>();
             var sql = "SELECT * FROM tipo_evento;";
 
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
+            using (var leitor = comando.ExecuteReader())
             {
-                var modelo = ObterModelo(leitor);
-
-                modelos.Add(modelo);
+                while (leitor.Read())
+                {
+                    modelos.Add(ObterModelo(leitor));
+                }
             }
-            leitor.Close();
 
             return modelos;
         }
-        public Modelo.TipoEvento BuscarPorId(int Id)
+
+        public Modelo.TipoEvento BuscarPorId(int id)
         {
-            Modelo.TipoEvento modelo = null;
+            var sql = "SELECT * FROM tipo_evento WHERE id = @id;";
 
-            List<Modelo.TipoEvento> modelos = new List<Modelo.TipoEvento>();
-
-            var sql = "SELECT * FROM tipo_evento WHERE id=@id;";
-
-            NpgsqlCommand comando = new NpgsqlCommand(sql, Conexao);
-
-            comando.Parameters.Add(new NpgsqlParameter("id", Id));
-
-            NpgsqlDataReader leitor = comando.ExecuteReader();
-
-            if (leitor.Read())
+            using (var conexao = GetConnection())
+            using (var comando = new NpgsqlCommand(sql, conexao))
             {
-                modelo = ObterModelo(leitor);
+                comando.Parameters.AddWithValue("id", id);
 
-                modelos.Add(modelo);
+                using (var leitor = comando.ExecuteReader())
+                {
+                    if (leitor.Read())
+                    {
+                        return ObterModelo(leitor);
+                    }
+                }
             }
-            leitor.Close();
 
-            return modelo;
+            return null;
         }
     }
 }
