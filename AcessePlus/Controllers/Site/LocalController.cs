@@ -48,6 +48,8 @@ namespace AcessePlus.Controllers.Site
                 Capacidade = l.Capacidade,
                 TipoLocalDescricao = l.TipoLocal?.Descricao ?? "",
                 ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id }),
+                QtdAvaliacoesPositivas = l.Avaliacoes.Count(x => x.Tipo_Enum == Avaliacao.eTipo.Positiva),
+                QtdAvaliacoesNegativas = l.Avaliacoes.Count(x => x.Tipo_Enum == Avaliacao.eTipo.Negativa),
             }).ToList();
 
             var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
@@ -64,8 +66,7 @@ namespace AcessePlus.Controllers.Site
             return View(viewModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Route("avaliar-local")]
         public IActionResult Avaliar(int LocalId, string comentario, string tipoAcessibilidade, string tipo)
         {
             var usuarioLogado = HttpContext.Session.GetInt32("IdUsuarioLogado");

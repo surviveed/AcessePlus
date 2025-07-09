@@ -37,15 +37,6 @@
         <p><strong>Tipo de Local:</strong> @(ViewBag.Local.TipoLocal?.Descricao ?? "Não informado")</p>
     </div>
 
-    <div class="avaliacoes-container">
-        <div class="avaliacao-item positiva">
-            <i class="fas fa-thumbs-up"></i><span>ViewBag.Local.QtdAvaliacoesPositivas</span>
-        </div>
-        <div class="avaliacao-item negativa">
-            <i class="fas fa-thumbs-down"></i><span>ViewBag.Local.QtdAvaliacoesNegativas</span>
-        </div>
-    </div>
-
     <button type="button" class="btn-avaliar" onclick="abrirModal('@ViewBag.Local.Nome','@ViewBag.Local.Id')"
         @(ViewBag.JaAvaliado ? "disabled" : "")>
         Avaliar
@@ -58,7 +49,7 @@
             <span class="close" onclick="fecharModal()">&times;</span>
             <h2 class="login-title">Avaliação de <span id="nomeLocalSpan"></span></h2>
 
-            <form asp-action="Avaliar" method="post">
+            <form action="avaliar-local" method="post">
                 @Html.AntiForgeryToken()
 
                 <input type="hidden" id="LocalId" name="LocalId" />
