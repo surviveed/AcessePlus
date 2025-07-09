@@ -98,14 +98,25 @@ namespace AcessePlus.Controllers
                 return View("Edit", vm);
             }
 
-            var evento = vm.Id == 0 ? new Evento() : new Negocio.Evento().BuscarPorId(vm.Id) ?? new Evento();
+            var negocio = new Negocio.Evento();
+            Evento evento;
+            if (vm.Id == 0)
+            {
+                evento = new Evento();
+            }
+            else
+            {
+                evento = negocio.BuscarPorId(vm.Id);
+                if (evento == null)
+                    return NotFound();
+            }
 
             evento.Nome = vm.Nome;
             evento.Descricao = vm.Descricao;
             evento.Local = new Negocio.Local().BuscarPorId(vm.LocalId);
             evento.TipoEvento = new Negocio.TipoEvento().BuscarPorId(vm.TipoEventoId);
 
-            new Negocio.Evento().Salvar(evento);
+            negocio.Salvar(evento);
 
             TempData["Sucesso"] = true;
             return RedirectToAction("Edit", new { id = evento.Id });

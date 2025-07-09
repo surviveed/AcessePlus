@@ -21,9 +21,9 @@ namespace AcessePlus.Persistencia
             return modelo;
         }
 
-        public void Inserir(Modelo.Evento modelo)
+        public int Inserir(Modelo.Evento modelo)
         {
-            var sql = $"INSERT INTO evento {CamposTabela} VALUES (@nome, @descricao, @id_local, @id_tipo);";
+            var sql = $"INSERT INTO evento {CamposTabela} VALUES (@nome, @descricao, @id_local, @id_tipo)RETURNING id;";
 
             using (var conexao = GetConnection())
             using (var comando = new NpgsqlCommand(sql, conexao))
@@ -33,7 +33,8 @@ namespace AcessePlus.Persistencia
                 comando.Parameters.AddWithValue("id_local", modelo.Local.Id);
                 comando.Parameters.AddWithValue("id_tipo", modelo.TipoEvento.Id);
 
-                comando.ExecuteNonQuery();
+                var id = comando.ExecuteScalar();
+                return Convert.ToInt32(id);
             }
         }
 

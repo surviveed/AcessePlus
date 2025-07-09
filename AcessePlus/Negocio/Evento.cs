@@ -9,7 +9,10 @@ namespace AcessePlus.Negocio
             if (modelo.Id != 0)
                 new Persistencia.Evento().Atualizar(modelo);
             else
-                new Persistencia.Evento().Inserir(modelo);
+            {
+                var persistenciaEvento = new Persistencia.Evento();
+                modelo.Id = persistenciaEvento.Inserir(modelo);
+            }
         }
         public void Excluir(int Id)
         {

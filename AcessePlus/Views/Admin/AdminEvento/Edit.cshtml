@@ -71,14 +71,14 @@
     @if (TempData["Sucesso"] != null && (bool)TempData["Sucesso"])
     {
         <script>
-            window.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'success',
                     title: 'Evento cadastrado com sucesso!',
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = '/adm-eventos';
+                        window.location.href = '/gerenciador/adm-eventos';
                     }
                 });
             });
