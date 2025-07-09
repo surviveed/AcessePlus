@@ -1,8 +1,9 @@
 @import url('base/reset.css');
 @import url('base/typography.css');
-/* @import url('base/variables.css'); */
+@import url('base/variables.css');
 @import url('base/components.css');
 
 @import url('pages/home.css');
 @import url('pages/local.css');
 @import url('pages/login.css');
+@import url('pages/local-detail.css');

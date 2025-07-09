@@ -1,0 +1,87 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Cadastro de Eventos";
+}
+
+<div class="home-page home-page--full-gradient">
+    <div class="home-main-content" style="max-width: 600px;">
+        <div class="login-wrapper">
+            <h2 class="login-title">Cadastrar Novo Evento</h2>
+
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="input-group">
+                    <label for="Nome">Nome</label>
+                    <input type="text" id="Nome" name="Nome" value="@Model.Nome" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="Descricao">Descricao</label>
+                    <input type="text" id="Descricao" name="Descricao" value="@Model.Descricao" required />
+                </div>
+
+                <div class="input-group">
+                    <label for="tipoSelect">Tipo de Evento</label>
+                    <select id="tipoSelect" name="TipoEventoId" class="input" required>
+                        <option value="">Selecione o Tipo de Evento</option>
+                        @foreach (var tipo in ViewBag.Tipos)
+                        {
+                            if (ViewBag.Evento?.TipoEventolId == tipo.Id)
+                            {
+                                <option value="@tipo.Id" selected>@tipo.Descricao</option>
+                            }
+                            else
+                            {
+                                <option value="@tipo.Id">@tipo.Descricao</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="paisSelect">Local</label>
+                    <select id="paisSelect" name="LocalId" class="input" required>
+                        <option value="">Selecione o local</option>
+
+                        @foreach (var local in ViewBag.Locais)
+                        {
+                            if (Model?.Local.Id == local.Id)
+                            {
+                                <option value="@local.Id" selected>@local.Nome</option>
+                            }
+                            else
+                            {
+                                <option value="@local.Id">@local.Nome</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["Sucesso"] != null && (bool)TempData["Sucesso"])
+    {
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Evento cadastrado com sucesso!',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/adm-eventos';
+                    }
+                });
+            });
+        </script>
+    }
+}

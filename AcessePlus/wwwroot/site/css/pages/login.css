@@ -16,6 +16,11 @@
 }
 
 .login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 5rem auto 5rem;
     background: #ffffff;
     padding: 4rem 3.5rem;
     border-radius: 16px;

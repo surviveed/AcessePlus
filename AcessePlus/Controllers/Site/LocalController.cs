@@ -48,9 +48,6 @@ namespace AcessePlus.Controllers.Site
                 Capacidade = l.Capacidade,
                 TipoLocalDescricao = l.TipoLocal?.Descricao ?? "",
                 ImagemUrl = Url.Action("Imagem", "Local", new { localId = l.Id }),
-                JaAvaliado = usuarioLogado != null ? l.Avaliacoes.Any(x => x.Usuario.Id == usuarioLogado) : false,
-                QtdAvaliacoesPositivas = l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Positiva),
-                QtdAvaliacoesNegativas = l.Avaliacoes.Count(x => x.Tipo_Enum == Modelo.Avaliacao.eTipo.Negativa),
             }).ToList();
 
             var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
@@ -66,127 +63,7 @@ namespace AcessePlus.Controllers.Site
 
             return View(viewModel);
         }
-        private void CarregarListasParaView(int? paisId, int? ufId, int? tipoLocalId = null)
-        {
-            if (paisId.HasValue)
-                ViewBag.Ufs = new AcessePlus.Negocio.Uf().BuscarTodos().Where(u => u.Pais.Id == paisId).ToList();
-            else
-                ViewBag.Ufs = new List<AcessePlus.Modelo.Uf>();
 
-            if (ufId.HasValue)
-                ViewBag.Cidades = new AcessePlus.Negocio.Cidade().BuscarTodos().Where(c => c.Uf.Id == ufId).ToList();
-            else
-                ViewBag.Cidades = new List<AcessePlus.Modelo.Cidade>();
-
-            var tipos = new AcessePlus.Negocio.TipoLocal().BuscarTodos();
-            ViewBag.Tipos = tipos;
-
-            ViewBag.TipoLocalSelecionado = tipoLocalId;
-        }
-
-        [HttpGet("Criar")]
-        public IActionResult Create()
-        {
-            var usuarioLogado = HttpContext.Session.GetString("UsuarioLogado");
-            if (string.IsNullOrEmpty(usuarioLogado))
-                return RedirectToAction("Index", "Login");
-
-            var paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-            ViewBag.Paises = paises;
-
-            CarregarListasParaView(null, null, null);
-
-            return View(new LocalCreateViewModel());
-        }
-
-        [HttpPost("Criar")]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(LocalCreateViewModel vm)
-        {
-            if (vm.Capacidade <= 0)
-            {
-                ModelState.AddModelError("Capacidade", "A capacidade deve ser maior que zero.");
-            }
-
-            if (vm.Imagens == null || vm.Imagens.Count == 0)
-            {
-                ModelState.AddModelError("Imagens", "Por favor, envie pelo menos uma foto do local.");
-            }
-
-            if (vm.TipoLocalId == 0)
-            {
-                ModelState.AddModelError("TipoLocalId", "Selecione um tipo de local válido.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
-                return View(vm);
-            }
-
-            var cidade = new AcessePlus.Negocio.Cidade().BuscarTodos()
-                .FirstOrDefault(c => c.Id == vm.CidadeId);
-
-            if (cidade == null)
-            {
-                ModelState.AddModelError("", "Cidade inválida.");
-                ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
-                return View(vm);
-            }
-
-            var tipoLocal = new AcessePlus.Negocio.TipoLocal()
-                .BuscarTodos()
-                .FirstOrDefault(t => t.Id == vm.TipoLocalId);
-
-            if (tipoLocal == null)
-            {
-                ModelState.AddModelError("TipoLocalId", "Tipo de local inválido.");
-                ViewBag.Paises = new AcessePlus.Negocio.Pais().BuscarTodos();
-                CarregarListasParaView(vm.PaisId, vm.UfId, vm.TipoLocalId);
-                return View(vm);
-            }
-
-            var local = new Modelo.Local
-            {
-                Nome = vm.Nome,
-                Capacidade = vm.Capacidade,
-                Endereco = vm.Endereco,
-                Cidade = cidade,
-                TipoLocal = tipoLocal
-            };
-
-            var negocio = new AcessePlus.Negocio.Local();
-            negocio.Salvar(local);
-
-            if (vm.Imagens != null && vm.Imagens.Count > 0)
-            {
-                var negocioImagem = new AcessePlus.Negocio.LocalImagem();
-                int ordem = 0;
-
-                foreach (var imagem in vm.Imagens)
-                {
-                    using var ms = new MemoryStream();
-                    imagem.CopyTo(ms);
-                    var bytes = ms.ToArray();
-
-                    var localImagem = new Modelo.LocalImagem
-                    {
-                        LocalId = local.Id,
-                        Imagem = bytes,
-                        NomeArquivo = imagem.FileName,
-                        Ordem = ordem++,
-                        DataCadastro = DateTime.Now
-                    };
-
-                    negocioImagem.Salvar(localImagem);
-                }
-            }
-
-            TempData["Sucesso"] = true;
-            return RedirectToAction("Create");
-        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Avaliar(int LocalId, string comentario, string tipoAcessibilidade, string tipo)
@@ -211,28 +88,8 @@ namespace AcessePlus.Controllers.Site
                 Tipo_Enum = (Modelo.Avaliacao.eTipo)Convert.ToChar(tipo)
             });
 
-            // Aqui você pode salvar no banco, ex:
-            // _context.Avaliacoes.Add(new Avaliacao { ... });
-
             TempData["Sucesso"] = true;
             return RedirectToAction("Index");
-        }
-
-
-        [HttpGet("BuscarUFsPorPais/{id}")]
-        public IActionResult BuscarUFsPorPais(int id)
-        {
-            var ufs = new AcessePlus.Negocio.Uf().BuscarTodos().Where(uf => uf.Pais.Id == id).ToList();
-            var resultado = ufs.Select(uf => new { uf.Id, uf.Descricao }).ToList();
-            return Json(resultado);
-        }
-
-        [HttpGet("BuscarCidadesPorUf/{id}")]
-        public IActionResult BuscarCidadesPorUf(int id)
-        {
-            var cidades = new AcessePlus.Negocio.Cidade().BuscarTodos().Where(c => c.Uf != null && c.Uf.Id == id).ToList();
-            var resultado = cidades.Select(c => new { c.Id, c.Descricao }).ToList();
-            return Json(resultado);
         }
 
         [HttpGet("Imagem/{localId}")]
@@ -255,7 +112,15 @@ namespace AcessePlus.Controllers.Site
         [Route("/locais/{Id}")]
         public IActionResult Detail(int Id)
         {
-            ViewBag.Local = new Negocio.Local().BuscarPorId(Id);
+            var local = new Negocio.Local().BuscarPorId(Id);
+            var imagemUrl = Url.Action("Imagem", "Local", new { localId = local.Id });
+
+            var avaliacoes = new Negocio.Avaliacao().BuscarTodos();
+
+            ViewBag.JaAvaliado = avaliacoes.FirstOrDefault(x => x.Usuario.Id == Id) != null ? true : false;
+            ViewBag.ImagemUrl = imagemUrl;
+            ViewBag.Local = local;
+
             return View();
         }
     }

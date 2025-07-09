@@ -1,14 +1,12 @@
+@model AcessePlus.Modelo.Local
+
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Detail";
-}
-
-@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/site/css/pages/evento.css" />
+    ViewData["Title"] = ViewBag.Local.Nome;
 }
 
 @section Scripts {
+    <script src="~/site/js/pages/local.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (TempData["Sucesso"] != null)
     {
@@ -23,58 +21,38 @@
     }
 }
 
-<div class="evento-page">
+<div class="evento-container">
 
-    <div class="evento-banner">
-        <img src="@ViewBag.Local.ImagemUrl" alt="Banner do evento @ViewBag.Local.Nome" />
+    <img class="evento-banner-img"
+        src="@(string.IsNullOrEmpty(ViewBag.ImagemUrl) ? "/images/placeholder.png" : ViewBag.ImagemUrl)"
+        alt="Imagem do local @ViewBag.Local.Nome" />
+
+
+    <h1 class="evento-titulo">@ViewBag.Local.Nome</h1>
+
+    <div class="evento-info">
+        <p><strong>Endereço:</strong> @ViewBag.Local.Endereco</p>
+        <p><strong>Cidade:</strong> @ViewBag.Local.Cidade?.Descricao</p>
+        <p><strong>Capacidade:</strong> @ViewBag.Local.Capacidade pessoas</p>
+        <p><strong>Tipo de Local:</strong> @(ViewBag.Local.TipoLocal?.Descricao ?? "Não informado")</p>
     </div>
 
-    <div class="evento-detalhes">
-        <h1 class="evento-titulo">@ViewBag.Local.Nome</h1>
-        <p class="evento-descricao">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto ea at unde
-            accusantium fuga error blanditiis quos earum ex? Asperiores neque cupiditate quis numquam repudiandae nisi
-            error officiis possimus nihil.
-
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem praesentium doloremque, eligendi excepturi
-            ducimus officia rem non iure sapiente placeat itaque recusandae ab sequi corrupti. Tempore earum sit aperiam
-            natus!
-        </p>
-
-        <div class="evento-info">
-            @* <p><strong>Data:</strong> @ViewBag.Local.Data.ToString("dd/MM/yyyy HH:mm")</p> *@
-            @* <p><strong>Local:</strong> @ViewBag.Local.Local.Nome - @ViewBag.Local.Local.Endereco,
-                @ViewBag.Local.Local.Cidade/@ViewBag.Local.Local.Uf
-            </p> *@
-            @* <p><strong>Capacidade:</strong> @ViewBag.Local.Local.Capacidade pessoas</p> *@
+    <div class="avaliacoes-container">
+        <div class="avaliacao-item positiva">
+            <i class="fas fa-thumbs-up"></i><span>ViewBag.Local.QtdAvaliacoesPositivas</span>
         </div>
-
-        @* <a class="btn btn-primary" href="@ViewBag.Local.LinkExterno" target="_blank" rel="noopener">
-            Garanta seu ingresso
-        </a> *@
-
-        <div class="avaliacoes-container">
-            <h2>Avaliações</h2>
-            @* <div class="avaliacao-item positiva">
-                <i class="fas fa-thumbs-up"></i> <span>@ViewBag.Local.QtdAvaliacoesPositivas</span>
-            </div>
-            <div class="avaliacao-item negativa">
-                <i class="fas fa-thumbs-down"></i> <span>@ViewBag.Local.QtdAvaliacoesNegativas</span>
-            </div> *@
+        <div class="avaliacao-item negativa">
+            <i class="fas fa-thumbs-down"></i><span>ViewBag.Local.QtdAvaliacoesNegativas</span>
         </div>
-
-        @{
-            var nomeUsuario = Context.Session.GetString("UsuarioNome");
-        }
-
-        @if (!string.IsNullOrEmpty(nomeUsuario))
-        {
-            <button class="btn btn-secundario" onclick="abrirModal('@ViewBag.Local.Nome', '@ViewBag.Local.Id')">Avaliar este
-                evento</button>
-        }
-
     </div>
 
-    <!-- Modal de Avaliação -->
+    <button type="button" class="btn-avaliar" onclick="abrirModal('@ViewBag.Local.Nome','@ViewBag.Local.Id')"
+        @(ViewBag.JaAvaliado ? "disabled" : "")>
+        Avaliar
+    </button>
+
+
+
     <div id="avaliarModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close" onclick="fecharModal()">&times;</span>
@@ -83,8 +61,7 @@
             <form asp-action="Avaliar" method="post">
                 @Html.AntiForgeryToken()
 
-                <input type="hidden" id="LocalId" name="LocalId" value="@ViewBag.Local.Local.Id" />
-                <input type="hidden" id="EventoId" name="EventoId" value="@ViewBag.Local.Id" />
+                <input type="hidden" id="LocalId" name="LocalId" />
 
                 <div class="input-group">
                     <label for="comentario">Comentário</label>

@@ -16,14 +16,9 @@ namespace AcessePlus.Persistencia
                 Id = leitor.GetInt32(leitor.GetOrdinal("id")),
                 Nome = leitor.GetString(leitor.GetOrdinal("nome")),
                 Capacidade = leitor.GetInt32(leitor.GetOrdinal("capacidade")),
-                Endereco = leitor.GetString(leitor.GetOrdinal("endereco")),
-                Cidade = new Modelo.Cidade
-                {
-                    Id = leitor.GetInt32(leitor.GetOrdinal("id_cidade"))
-                }
+                Endereco = leitor.GetString(leitor.GetOrdinal("endereco"))
             };
 
-            // Verifica se ambas as colunas existem e não são nulas
             if (PossuiColuna(leitor, "tipo_local_id") && !leitor.IsDBNull(leitor.GetOrdinal("tipo_local_id")) &&
                 PossuiColuna(leitor, "tipo_local_descricao") && !leitor.IsDBNull(leitor.GetOrdinal("tipo_local_descricao")))
             {
@@ -32,6 +27,54 @@ namespace AcessePlus.Persistencia
                     Id = leitor.GetInt32(leitor.GetOrdinal("tipo_local_id")),
                     Descricao = leitor.GetString(leitor.GetOrdinal("tipo_local_descricao"))
                 };
+            }
+
+            if (PossuiColuna(leitor, "cidade_id"))
+            {
+                var cidade = new Modelo.Cidade
+                {
+                    Id = leitor.GetInt32(leitor.GetOrdinal("cidade_id"))
+                };
+
+                if (PossuiColuna(leitor, "cidade_descricao") && !leitor.IsDBNull(leitor.GetOrdinal("cidade_descricao")))
+                    cidade.Descricao = leitor.GetString(leitor.GetOrdinal("cidade_descricao"));
+
+                if (PossuiColuna(leitor, "cidade_codigo_ibge") && !leitor.IsDBNull(leitor.GetOrdinal("cidade_codigo_ibge")))
+                    cidade.CodigoIbge = leitor.GetInt32(leitor.GetOrdinal("cidade_codigo_ibge"));
+
+                if (PossuiColuna(leitor, "uf_id"))
+                {
+                    var uf = new Modelo.Uf
+                    {
+                        Id = leitor.GetInt32(leitor.GetOrdinal("uf_id"))
+                    };
+
+                    if (PossuiColuna(leitor, "uf_descricao") && !leitor.IsDBNull(leitor.GetOrdinal("uf_descricao")))
+                        uf.Descricao = leitor.GetString(leitor.GetOrdinal("uf_descricao"));
+
+                    if (PossuiColuna(leitor, "uf_codigo_ibge") && !leitor.IsDBNull(leitor.GetOrdinal("uf_codigo_ibge")))
+                        uf.CodigoIbge = leitor.GetInt32(leitor.GetOrdinal("uf_codigo_ibge"));
+
+                    if (PossuiColuna(leitor, "pais_id"))
+                    {
+                        var pais = new Modelo.Pais
+                        {
+                            Id = leitor.GetInt32(leitor.GetOrdinal("pais_id"))
+                        };
+
+                        if (PossuiColuna(leitor, "pais_descricao") && !leitor.IsDBNull(leitor.GetOrdinal("pais_descricao")))
+                            pais.Descricao = leitor.GetString(leitor.GetOrdinal("pais_descricao"));
+
+                        if (PossuiColuna(leitor, "pais_codigo_ibge") && !leitor.IsDBNull(leitor.GetOrdinal("pais_codigo_ibge")))
+                            pais.CodigoIbge = leitor.GetInt32(leitor.GetOrdinal("pais_codigo_ibge"));
+
+                        uf.Pais = pais;
+                    }
+
+                    cidade.Uf = uf;
+                }
+
+                modelo.Cidade = cidade;
             }
 
             return modelo;
@@ -123,7 +166,38 @@ namespace AcessePlus.Persistencia
 
         public Modelo.Local BuscarPorId(int id)
         {
-            var sql = "SELECT * FROM local WHERE id = @id;";
+            var sql = @"
+            SELECT 
+                l.id,
+                l.nome,
+                l.capacidade,
+                l.endereco,
+                l.id_cidade,
+                -- TipoLocal
+                tl.id AS tipo_local_id,
+                tl.descricao AS tipo_local_descricao,
+
+                -- Cidade
+                c.id AS cidade_id,
+                c.descricao AS cidade_descricao,
+                c.codigo_ibge AS cidade_codigo_ibge,
+
+                -- UF
+                u.id AS uf_id,
+                u.descricao AS uf_descricao,
+                u.codigo_ibge AS uf_codigo_ibge,
+
+                -- País
+                p.id AS pais_id,
+                p.descricao AS pais_descricao,
+                p.codigo_ibge AS pais_codigo_ibge
+
+            FROM local l
+            INNER JOIN tipolocal tl ON l.id_tipo_local = tl.id
+            INNER JOIN cidade c ON l.id_cidade = c.id
+            INNER JOIN uf u ON c.id_uf = u.id
+            INNER JOIN pais p ON u.id_pais = p.id
+            WHERE l.id = @id;";
 
             using (var conexao = GetConnection())
             using (var comando = new NpgsqlCommand(sql, conexao))
